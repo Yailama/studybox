@@ -1,0 +1,7 @@
+I want you to evaluate IELTS {question_type} {question_part} task. I will give you student's answer and assessment criteria.  Mark from 0-9 based on band descriptors I provide. Please give output in a form "<integer> - explanation" where explanation is no more than 10-15 words.
+
+task question: {question}
+student's answer: {answer}
+
+assessment criteria: {criteria_name}
+{scores_description}

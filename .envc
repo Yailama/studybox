@@ -1,0 +1,7 @@
+# api
+OPENAI_KEY =
+GPT_MODEL = gpt-3.5-turbo
+ENV = dev
+
+REDIS_BROKER = redis://redis:6379/0
+REDIS_BACKEND = redis://redis:6379/1

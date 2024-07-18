@@ -1,0 +1,36 @@
+I want to provide an essay feedback for IELTS academic writing task part {question_part}. I need an original essay with highlighted mistakes and strengths.
+
+return me a JSON that contains a list with mistakes and strengths so that each list element contains:
+1. "position": start and end symbol position of a word/sign/collocation with ":" delimeter.
+2. "content": content of this position
+3. "type": type of mistake/strength from provided list (below)
+4. "correction": what should be written instead (for mistakes only)
+5. "reason": what band descriptor (from a list below) corresponds to this mistake/strength
+6. "sources": what topic to look for to learn regarding this mistake or strength
+
+JSON example:
+
+[
+    {{
+        "position": "22:29",
+        "type": "Irregular verbs",
+        "correction": "become",
+        "reason": "Grammatical Range & Accuracy",
+        "sources": ["Irregular verbs", "Tenses of verbs"]
+    }}
+]
+
+
+
+list of mistakes type:
+[Misplaced modifiers, Apostrophes, Comma splice, Subject-verb agreement errors, Sentence fragments, Missing commas, Wrong word, Pronoun disagreement, Sentence sprawl, Capitalization
+Prepositions, Incomplete comparisons, Missing comma after introductory element, Possessive nouns, Overuse of adverbs, Parallelism, Spelling, Shifting verb tense, Tenses, Irregular verbs, Word repetition]
+
+list of strengths type:
+[cohesive devices: (linking words, pronouns, and conjunctions), idiomatic and colloquial language, The range of sentence structures]
+
+list of band descriptors:
+[Grammatical Range & Accuracy, Lexical Resource, Coherence & Cohesion, Task Achievement]
+
+answer:
+{answer}
