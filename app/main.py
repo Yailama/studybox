@@ -1,16 +1,16 @@
 import json
 import os
+from typing import Union
 
 import uvicorn
 from celery.result import AsyncResult
 from fastapi import FastAPI, HTTPException
 from pydantic import ValidationError
+from .config.logging_config import fastapi_logger as logger
 
 from app import schemas
-from .schemas import BandDescriptors
 
 from .celery_worker import celery_app, evaluate_answer
-
 
 app = FastAPI()
 
@@ -19,12 +19,13 @@ def load_and_validate_json(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
         json_data = json.load(f)
     try:
-        band_descriptors = BandDescriptors(**json_data)
+        band_descriptors = schemas.BandDescriptors(**json_data)
         return band_descriptors.dict()
     except ValidationError as e:
+        logger.error("Unable to load band descriptors file")
         raise HTTPException(status_code=422, detail="JSON validation error") from e
 
-# Define startup event function
+
 @app.on_event("startup")
 async def startup_event():
     file_name = 'band_descriptors.json'
@@ -33,13 +34,14 @@ async def startup_event():
     try:
         app.band_descriptors = load_and_validate_json(file_path)
     except FileNotFoundError as e:
+        logger.error("Unable to load band descriptors file")
         raise HTTPException(status_code=404, detail=f"File '{file_name}' not found.") from e
 
-    file_name="prompts/band_scores_prompt_template.txt"
+    file_name = "prompts/band_scores_prompt_template.txt"
     with open(os.path.join(os.path.dirname(__file__), file_name), 'r', encoding='utf-8') as f:
         app.band_score_prompt_template = f.read()
 
-    file_name="prompts/writing_correction_prompt_template.txt"
+    file_name = "prompts/writing_correction_prompt_template.txt"
     with open(os.path.join(os.path.dirname(__file__), file_name), 'r', encoding='utf-8') as f:
         app.writing_correction_prompt_template = f.read()
 
@@ -59,13 +61,15 @@ def register_evaluation_task(eval_item: schemas.AnswerIn):
     return {"task_id": celery_task.id}
 
 
-@app.get("/tasks/{task_id}")
+@app.get("/tasks/{task_id}", response_model=Union[schemas.SpeakingFeedbackOut, schemas.WritingFeedbackOut, str])
 def get_task(task_id: str):
     result = AsyncResult(task_id, app=celery_app)
-
     if result.ready():
-        return {"status": "Task completed!", "result": result.result}
-    return {"status": "Task pending or in progress.", "result": result.result}
+        if result.successful():
+            return result.result  # Return the actual result
+        else:
+            return {"error": result.info.args[0]}
+    return "Task pending or in progress."
 
 
 def start():

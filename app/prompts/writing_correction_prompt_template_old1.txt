@@ -1,0 +1,121 @@
+Pretend you are IELTS expert. I want to provide a proofreading of student's answer for IELTS academic writing task part {question_part}
+return me a JSON that contains a list with mistakes and strengths so that each list element contains:
+
+1. "type": one of "mistake" or "strength"
+2. "start": zero-based index start of mistake/strength word/sign/collocation
+3. "end": zero-based index end of mistake/strength word/sign/collocation
+4. "content": content of this position (start and end inclusive, must end up in the word/sign/collocation itself)
+3. "subtype": type of mistake/strength (from list below)
+4. "correction": what should be written instead (for mistakes only)
+5. "comment": your brief comment on this. no more than 20 words.
+
+try to be precise as much as possible: i.e. put exactly a word, collocation or a sign,
+but not the entire sentence or paragraph in mistake/strength. examples in subtypes are given for reference only.
+
+JSON format to return:
+
+{{
+    "feedback":  {{
+        "type": Literal["mistake", "strength"]
+        "start": int
+        "end": int
+        "content": str
+        "subtype": str
+        "correction": str
+        "comment": str
+    }}
+}}
+
+
+list of mistakes subtype:
+[
+  {{
+    "subtype": "Sentence Fragments",
+    "example": {{
+      "incorrect": "Tests of the Shroud of Turin have produced some curious findings. For example. the pollen of forty-eight plants native to Europe and the Middle East.",
+      "revised": "Tests of the Shroud of Turin have produced some curious findings. For example, the cloth contains the pollen of forty-eight plants native to Europe and the Middle East."
+    }}
+  }},
+  {{
+    "subtype": "Sentence Sprawl",
+    "example": {{
+      "incorrect": "The hearing was planned for Mon., Dec. 2, but not all of the witnesses could be available, so it was rescheduled for the following Friday, and then all the witnesses could attend.",
+      "revised": "The hearing, which had been planned for Mon., Dec. 2, was rescheduled for the following Friday so that all witnesses would be able to attend."
+    }}
+  }},
+  {{
+    "subtype": "Misplaced and Dangling Modifiers",
+    "example": {{
+      "incorrect": "When writing a proposal, an original task is set for research.",
+      "revised": "When writing a proposal, a scholar sets an original task for research."
+    }}
+  }},
+  {{
+    "subtype": "Faulty Parallelism",
+    "example": {{
+      "incorrect": "The candidate's goals include winning the election, a national health program, and the educational system.",
+      "revised": "The candidate's goals include winning the election, enacting a national health program, and improving the educational system."
+    }}
+  }},
+  {{
+    "subtype": "Unclear Pronoun Reference",
+    "example": {{
+      "incorrect": "Einstein was a brilliant mathematician. This is how he was able to explain the universe.",
+      "revised": "Einstein, who was a brilliant mathematician, used his ability with numbers to explain the universe."
+    }}
+  }},
+  {{
+    "subtype": "Incorrect Pronoun Case",
+    "example": {{
+      "incorrect": "Castro's communist principles inevitably led to an ideological conflict between he and President Kennedy.",
+      "revised": "Castro's communist principles inevitably led to an ideological conflict between him and President Kennedy."
+    }}
+  }},
+  {{
+    "subtype": "Omitted Commas",
+    "example": {{
+      "incorrect": "When it comes to eating people differ in their tastes.",
+      "revised": "When it comes to eating, people differ in their tastes."
+    }}
+  }},
+  {{
+    "subtype": "Superfluous Commas",
+    "example": {{
+      "incorrect": "Field trips are required, in several courses, such as, botany and geology.",
+      "revised": "Field trips are required in several courses, such as botany and geology."
+    }}
+  }},
+  {{
+    "subtype": "Comma Splices",
+    "example": {{
+      "incorrect": "In 1952, Japan's GNP was one third that of France, by the late 1970s, it was larger than the GNPs of France and Britain combined.",
+      "revised": "In 1952, Japan's GNP was one third that of France. By the late 1970s, it was larger than the GNPs of France and Britain combined."
+    }}
+  }},
+  {{
+    "subtype": "Apostrophe Errors",
+    "example": {{
+      "incorrect": "In the current conflict its uncertain who's borders their contesting.",
+      "revised": "In the current conflict, it is [it's] uncertain whose borders they are [they're] contesting."
+    }}
+  }},
+  {{
+    "subtype": "Words Easily Confused",
+    "example": {{
+      "incorrect": "The recession had a negative affect on sales.",
+      "revised": "The recession had a negative effect on sales."
+    }}
+  }},
+  {{
+    "subtype": "Misspellings",
+    "example": {{
+      "incorrect": "The laboratory instructor choose not to offer detailed advise.",
+      "revised": "The laboratory instructor chose not to offer detailed advice."
+    }}
+  }}
+]
+
+
+
+list of strengths subtype:
+[Linking words, Idiomatic and colloquial language, The range of sentence structures, Sophisticated vocabulary]

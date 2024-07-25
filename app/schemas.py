@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field, UUID4, validator, field_validator, constr, model_validator, computed_field
 from typing import Literal, Union, Dict, Any, List
+from pydantic import BaseModel, UUID4, model_validator, Field
 
 
 class AnswerBase(BaseModel):
@@ -27,7 +27,12 @@ class TaskRegistration(BaseModel):
 
 class BandScores(BaseModel):
     name: Literal[
-        "Task Achievement", "Coherence & Cohesion", "Lexical Resource", "Grammatical Range & Accuracy", "Fluency and Coherence"]
+        "Task Achievement",
+        "Coherence & Cohesion",
+        "Lexical Resource",
+        "Grammatical Range & Accuracy",
+        "Fluency and Coherence"
+    ]
     scores: Dict[str, str]
 
     @model_validator(mode='before')
@@ -97,14 +102,59 @@ class BandDescriptors(BaseModel):
 
         return data
 
-    # @computed_field
-    # @property
-    # def area(self) -> int:
-    #     return self.width * self.length
-
     @model_validator(mode='after')
     @classmethod
     def extrapolate_speaking(cls, data: Any) -> Any:
         data.sections["speaking"].parts["2"] = data.sections["speaking"].parts["1"]
         data.sections["speaking"].parts["3"] = data.sections["speaking"].parts["1"]
         return data
+
+
+class BandDescriptorFeedback(BaseModel):
+    score: int
+    feedback: str
+
+
+class TextCorrectionFeedback(BaseModel):
+    before: str
+    after: str
+
+
+class WritingTextCorrection(BaseModel):
+    type: Literal["mistake", "strength"]
+    subtype: str
+    source: str
+    content: str
+
+
+class WritingTextCorrectionMistake(WritingTextCorrection):
+    type: Literal["mistake"]
+    difference: List[TextCorrectionFeedback]
+
+
+class WritingTextCorrectionStrength(WritingTextCorrection):
+    type: Literal["strength"]
+
+
+class WritingTextCorrectionFeedback(BaseModel):
+    feedback: List[Union[WritingTextCorrectionMistake, WritingTextCorrectionStrength]]
+
+
+class WritingFeedbackOut(BaseModel):
+    task_achievement: BandDescriptorFeedback = Field(alias="Task Achievement")
+    coherence_and_cohesion: BandDescriptorFeedback = Field(alias="Coherence & Cohesion")
+    lexical_resource: BandDescriptorFeedback = Field(alias="Lexical Resource")
+    grammar: BandDescriptorFeedback = Field(alias="Grammatical Range & Accuracy")
+    text_correction: List[Union[WritingTextCorrectionMistake, WritingTextCorrectionStrength]] = Field(
+        alias="Text Correction")
+
+
+class SpeakingFeedbackOut(BaseModel):
+    fluency_and_cohesion: BandDescriptorFeedback = Field(alias="Fluency and Coherence")
+    lexical_resource: BandDescriptorFeedback = Field(alias="Lexical Resource")
+    grammar: BandDescriptorFeedback = Field(alias="Grammatical Range & Accuracy")
+    text_correction: List[Union[WritingTextCorrectionMistake, WritingTextCorrectionStrength]] = Field(
+        alias="Text Correction")
+
+    class Config:
+        allow_population_by_field_name = True

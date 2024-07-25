@@ -1,7 +1,22 @@
-I want you to evaluate IELTS {question_type} {question_part} task. I will give you student's answer and assessment criteria.  Mark from 0-9 based on band descriptors I provide. Please give output in a form "<integer> - explanation" where explanation is no more than 10-15 words.
+I want you to evaluate IELTS {question_type} {question_part} task. I will give you student's answer and assessment criteria. Mark from 0-9 based on band descriptors I provide. Return a JSON with score and feedback where the feedback is no more than 10-15 words.
 
-task question: {question}
-student's answer: {answer}
+From given descriptors, find the description that matches best to the answer and choose corresponding score.
+Don't rush and be iterative:
+ - start from the highest score of 9, look at the description.
+ - then look at the description of 8. If it fits better, choose 8
+ - look at 7, if it describes the answer not as well as 8, keep 8,
+ - ...and so on.
+
+ This way, I want you to carefully compare descriptions and the answer to be as precise as possible.
+ Deduct points only when you see an error described in descriptors to deduct for. Put them in "examples" as in answer.
+
+output format:
+{{
+    "score": int,
+    "feedback": str
+}}
 
 assessment criteria: {criteria_name}
 {scores_description}
+
+task question: {question}
