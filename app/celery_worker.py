@@ -26,7 +26,6 @@ openai.api_key = os.getenv("OPENAI_KEY")
 REDIS_BROKER = os.getenv("REDIS_BROKER")
 REDIS_BACKEND = os.getenv("REDIS_BACKEND")
 SEED = 1
-
 COMPLETION_TOKENS = 2500
 MAX_TOKENS = 4050
 GPT_MODEL = os.getenv("GPT_MODEL")
@@ -67,12 +66,15 @@ class InvalidResponseFormat(Exception):
     pass
 
 
-@celery_app.task(autoretry_for=(InvalidResponseFormat,),
+@celery_app.task(bind=True,
+                 autoretry_for=(InvalidResponseFormat,),
                  retry_backoff=True,
                  retry_kwargs={'max_retries': 5}
                  )
-def get_feedback(answer_evaluator, prompt):
-    answer_evaluator.gpt_request(prompt)
+def get_feedback(self, answer_evaluator, prompt):
+    if self.request.retries > 0:
+        prompt.seed += 1
+    answer_evaluator.gpt_request(prompt=prompt)
     return answer_evaluator.feedback
 
 
@@ -101,6 +103,7 @@ class Prompt:
         self.band_descriptor = band_descriptor
         self.response_format = response_format
         self.answer = answer
+        self.seed = SEED
 
 
 class AnswerEvaluator:
@@ -142,7 +145,7 @@ class AnswerEvaluator:
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
-            seed=SEED,
+            seed=prompt.seed,
             response_format={"type": prompt.response_format.value}
         )
         response = response.choices[0].message.content
