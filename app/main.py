@@ -4,7 +4,7 @@ from typing import Union
 
 import uvicorn
 from celery.result import AsyncResult
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, middleware, Request, Response
 from pydantic import ValidationError
 from .config.logging_config import fastapi_logger as logger
 
@@ -46,6 +46,23 @@ async def startup_event():
         app.writing_correction_prompt_template = f.read()
 
 
+@app.middleware("http")
+async def log_middleware(request: Request, call_next):
+    response: Response = await call_next(request)
+
+    logger.info(
+        "Request processed",
+        method=request.method,
+        url=str(request.url),
+        client_ip=request.client.host,
+        status_code=response.status_code,
+        headers=dict(request.headers),
+        response_headers=dict(response.headers)
+    )
+
+    return response
+
+
 @app.post(
     "/evaluate",
     response_model=schemas.TaskRegistration,
@@ -66,7 +83,7 @@ def get_task(task_id: str):
     result = AsyncResult(task_id, app=celery_app)
     if result.ready():
         if result.successful():
-            return result.result  # Return the actual result
+            return result.result
         else:
             return {"error": result.info.args[0]}
     return "Task pending or in progress."

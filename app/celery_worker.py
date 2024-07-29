@@ -1,5 +1,7 @@
 import json
+import logging
 import os
+import re
 from enum import Enum
 from json import JSONDecodeError
 from typing import Type, Dict, Any
@@ -13,14 +15,7 @@ from app.schemas import WritingTextCorrectionFeedback, BandDescriptorFeedback
 from celery.utils.log import get_task_logger
 
 from celery import signals
-
-
-@signals.task_prerun.connect
-def on_task_prerun(sender, task_id, task, args, kwargs, **_):
-    structlog.contextvars.bind_contextvars(task_id=task_id, task_name=task.name)
-
-
-logger = structlog.wrap_logger(get_task_logger(__name__))
+from config.logging_config import celery_logger as logger
 
 openai.api_key = os.getenv("OPENAI_KEY")
 REDIS_BROKER = os.getenv("REDIS_BROKER")
@@ -30,11 +25,49 @@ COMPLETION_TOKENS = 2500
 MAX_TOKENS = 4050
 GPT_MODEL = os.getenv("GPT_MODEL")
 
+
+@signals.setup_logging.connect
+def supress(**kwargs):
+    logger = logging.getLogger()
+    for handler in logger.handlers:
+        handler.setFormatter(StructlogFormatter())
+
+
 celery_app = Celery(
     "celery_worker",
     broker=REDIS_BROKER,
     backend=REDIS_BACKEND
 )
+
+
+class StructlogFormatter(logging.Formatter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.processor = structlog.processors.JSONRenderer()
+
+    def format(self, record):
+        log_dict = {
+            'event': record.getMessage(),
+            'level': record.levelname.lower(),
+            'timestamp': self.formatTime(record, self.datefmt),
+            'logger': record.name
+        }
+
+        if re.match("celery.*", record.name) and "return_value" in record.args:
+            try:
+                message_as_json = json.loads(re.sub("'", "\"", record.args["return_value"]))
+                if isinstance(message_as_json, dict):
+                    log_dict['data'] = message_as_json
+                    record.args["return_value"] = "see data section for returned JSON"
+                    log_dict['event'] = record.getMessage()
+            except (json.JSONDecodeError, TypeError):
+                pass
+        return self.processor(get_task_logger(__name__), "anc", log_dict)
+
+
+@signals.task_prerun.connect
+def on_task_prerun(sender, task_id, task, args, kwargs, **_):
+    structlog.contextvars.bind_contextvars(task_id=task_id, task_name=task.name)
 
 
 class FeedbackType(Enum):
