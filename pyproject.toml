@@ -23,6 +23,7 @@ redis = "^5.0.7"
 openai = "^1.35.10"
 pylint = "^3.2.5"
 structlog = "^24.4.0"
+pytest = "^8.3.2"
 [tool.poetry.group.dev.dependencies]
 commitizen = "^3.28.0"
 
