@@ -3,7 +3,8 @@ import os
 from typing import Union, Dict
 
 import uvicorn
-from fastapi import FastAPI, HTTPException, Response
+
+from fastapi import FastAPI, HTTPException, middleware, Request, Response
 from pydantic import ValidationError
 from .config.logging_config import fastapi_logger as logger
 
@@ -45,6 +46,23 @@ async def startup_event():
         app.writing_correction_prompt_template = f.read()
 
 
+@app.middleware("http")
+async def log_middleware(request: Request, call_next):
+    response: Response = await call_next(request)
+
+    logger.info(
+        "Request processed",
+        method=request.method,
+        url=str(request.url),
+        client_ip=request.client.host,
+        status_code=response.status_code,
+        headers=dict(request.headers),
+        response_headers=dict(response.headers)
+    )
+
+    return response
+
+
 @app.post(
     "/evaluate",
     response_model=schemas.TaskRegistration,
@@ -64,18 +82,21 @@ def register_evaluation_task(eval_item: schemas.AnswerIn):
 def get_task(task_id: str, response: Response):
     group_result = celery_app.GroupResult.restore(task_id)
 
-    if not group_result.ready():
-        response.status_code = 202
-        return {"detail": "Evaluation in progress"}
+    if group_result:
+        if not group_result.ready():
+            response.status_code = 202
+            return {"detail": "Evaluation in progress"}
 
-    if group_result.failed():
-        raise HTTPException(status_code=400, detail="A task in the group failed")
+        if group_result.failed():
+            raise HTTPException(status_code=400, detail="A task in the group failed")
 
-    group_result = group_result.get()
-    merged_results = {}
-    [merged_results.update(task_result) for task_result in group_result]
+        group_result = group_result.get()
+        merged_results = {}
+        [merged_results.update(task_result) for task_result in group_result]
 
-    return merged_results
+        return merged_results
+
+    raise HTTPException(status_code=400, detail=f"Task with id {task_id} not found")
 
 
 def start():
