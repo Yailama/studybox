@@ -1,9 +1,8 @@
 import json
 import os
-from typing import Union
+from typing import Union, Dict
 
 import uvicorn
-from celery.result import AsyncResult
 from fastapi import FastAPI, HTTPException, middleware, Request, Response
 from pydantic import ValidationError
 from .config.logging_config import fastapi_logger as logger
@@ -68,25 +67,35 @@ async def log_middleware(request: Request, call_next):
     response_model=schemas.TaskRegistration,
 )
 def register_evaluation_task(eval_item: schemas.AnswerIn):
-    celery_task = evaluate_answer.delay(question_type=eval_item.task.question_type,
-                                        question_part=eval_item.task.question_part,
-                                        question=eval_item.task.question,
-                                        answer=eval_item.task.answer,
-                                        band_descriptors=app.band_descriptors,
-                                        band_score_prompt_template=app.band_score_prompt_template,
-                                        writing_correction_prompt_template=app.writing_correction_prompt_template)
-    return {"task_id": celery_task.id}
+    celery_task = evaluate_answer(question_type=eval_item.task.question_type,
+                                  question_part=eval_item.task.question_part,
+                                  question=eval_item.task.question,
+                                  answer=eval_item.task.answer,
+                                  band_descriptors=app.band_descriptors,
+                                  band_score_prompt_template=app.band_score_prompt_template,
+                                  writing_correction_prompt_template=app.writing_correction_prompt_template)
+    return {"task_id": celery_task}
 
 
-@app.get("/tasks/{task_id}", response_model=Union[schemas.SpeakingFeedbackOut, schemas.WritingFeedbackOut, str])
-def get_task(task_id: str):
-    result = AsyncResult(task_id, app=celery_app)
-    if result.ready():
-        if result.successful():
-            return result.result
-        else:
-            return {"error": result.info.args[0]}
-    return "Task pending or in progress."
+@app.get("/tasks/{task_id}", response_model=Union[schemas.SpeakingFeedbackOut, schemas.WritingFeedbackOut, Dict[str, str]])
+def get_task(task_id: str, response: Response):
+    group_result = celery_app.GroupResult.restore(task_id)
+
+    if group_result:
+        if not group_result.ready():
+            response.status_code = 202
+            return {"detail": "Evaluation in progress"}
+
+        if group_result.failed():
+            raise HTTPException(status_code=400, detail="A task in the group failed")
+
+        group_result = group_result.get()
+        merged_results = {}
+        [merged_results.update(task_result) for task_result in group_result]
+
+        return merged_results
+
+    raise HTTPException(status_code=400, detail=f"Task with id {task_id} not found")
 
 
 def start():

@@ -1,7 +1,9 @@
 import logging
+import os
+
 import structlog
 
-FILENAME = "app.log"
+FILENAME = os.environ.get("LOGS_FILENAME", "app.log")
 
 structlog.configure(
     processors=[

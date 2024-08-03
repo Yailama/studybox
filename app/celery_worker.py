@@ -6,7 +6,7 @@ from enum import Enum
 from json import JSONDecodeError
 from typing import Type, Dict, Any
 
-from celery import Celery
+from celery import Celery, group
 import openai
 import structlog
 from pydantic import ValidationError
@@ -15,7 +15,7 @@ from app.schemas import WritingTextCorrectionFeedback, BandDescriptorFeedback
 from celery.utils.log import get_task_logger
 
 from celery import signals
-from config.logging_config import celery_logger as logger
+from .config.logging_config import celery_logger as logger
 
 openai.api_key = os.getenv("OPENAI_KEY")
 REDIS_BROKER = os.getenv("REDIS_BROKER")
@@ -32,11 +32,11 @@ def supress(**kwargs):
     for handler in logger.handlers:
         handler.setFormatter(StructlogFormatter())
 
-
 celery_app = Celery(
     "celery_worker",
     broker=REDIS_BROKER,
-    backend=REDIS_BACKEND
+    backend=REDIS_BACKEND,
+    broker_connection_retry_on_startup=True
 )
 
 
@@ -85,11 +85,6 @@ class QuestionType(Enum):
     WRITING = "writing"
 
 
-@celery_app.task
-def add(x, y):
-    return x + y
-
-
 class MaxRetriesExceededError(Exception):
     pass
 
@@ -104,15 +99,14 @@ class InvalidResponseFormat(Exception):
                  retry_backoff=True,
                  retry_kwargs={'max_retries': 5}
                  )
-def get_feedback(self, answer_evaluator, prompt):
+def get_feedback(self, prompt):
     if self.request.retries > 0:
         prompt.seed += 1
-    answer_evaluator.gpt_request(prompt=prompt)
-    return answer_evaluator.feedback
+    feedback = gpt_request(prompt=prompt)
+    return feedback
 
 
-@celery_app.task
-def evaluate_answer(question_type: Type[QuestionType],
+def evaluate_answer(question_type: QuestionType,
                     question_part: str,
                     question: str,
                     answer: str,
@@ -123,14 +117,16 @@ def evaluate_answer(question_type: Type[QuestionType],
                                        answer, band_descriptors, band_score_prompt_template,
                                        writing_correction_prompt_template)
     prompts = answer_evaluator.get_prompts()
-    for prompt in prompts:
-        get_feedback.s(answer_evaluator, prompt).apply()
-    return answer_evaluator.feedback
+    feedback_tasks = [get_feedback.s(prompt.to_dict()) for prompt in prompts]
+
+    result = group(feedback_tasks).apply_async()
+    result.save()
+    return result.id
 
 
 class Prompt:
-    def __init__(self, prompt_message: str, response_type: FeedbackType,
-                 band_descriptor: str, response_format: ResponseFormat, answer: str):
+    def __init__(self, prompt_message: str, response_type: str,
+                 band_descriptor: str, response_format: str, answer: str):
         self.prompt_message = prompt_message
         self.response_type = response_type
         self.band_descriptor = band_descriptor
@@ -138,10 +134,23 @@ class Prompt:
         self.answer = answer
         self.seed = SEED
 
+    def to_dict(self):
+        return {
+            "prompt_message": self.prompt_message,
+            "response_type": self.response_type,
+            "band_descriptor": self.band_descriptor,
+            "response_format": self.response_format,
+            "answer": self.answer,
+            "seed": self.seed,
+        }
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
+
 
 class AnswerEvaluator:
 
-    def __init__(self, question_part: str, question_type: Type[QuestionType],
+    def __init__(self, question_part: str, question_type: QuestionType,
                  question: str, answer: str,
                  band_descriptors: Dict, band_score_prompt_template: str,
                  writing_correction_prompt_template: str):
@@ -155,37 +164,7 @@ class AnswerEvaluator:
         self.band_score_prompt_template = band_score_prompt_template
         self.writing_correction_prompt_template = writing_correction_prompt_template
 
-    def evaluate_answer(self):
-        prompts = self.get_prompts()
-        for prompt in prompts:
-            self.gpt_request(prompt)
-
-    def gpt_request(self, prompt):
-        response = openai.chat.completions.create(
-            model=GPT_MODEL,
-            messages=[
-                {
-                    "role": "system",
-                    "content": prompt.prompt_message
-                },
-                {
-                    "role": "user",
-                    "content": prompt.answer
-                }
-            ],
-            temperature=1,
-            max_tokens=COMPLETION_TOKENS,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-            seed=prompt.seed,
-            response_format={"type": prompt.response_format.value}
-        )
-        response = response.choices[0].message.content
-        self.answer_validation(response, prompt)
-
     def get_prompts(self):
-
         descriptors = self.band_descriptors["sections"][self.question_type]["parts"][self.question_part]["descriptors"]
 
         prompts = [
@@ -197,39 +176,66 @@ class AnswerEvaluator:
                     criteria_name=x['name'],
                     scores_description=x['scores']
                 ),
-                response_type=FeedbackType.SCORE_AND_EXPLANATION,
+                response_type=FeedbackType.SCORE_AND_EXPLANATION.value,
                 band_descriptor=x['name'],
-                response_format=ResponseFormat.JSON_OBJECT,
+                response_format=ResponseFormat.JSON_OBJECT.value,
                 answer=self.answer
             ) for x in descriptors
         ]
 
         prompts.append(Prompt(
             prompt_message=self.writing_correction_prompt_template.format(question_part=self.question_part),
-            response_type=FeedbackType.TEXT_CORRECTION,
+            response_type=FeedbackType.TEXT_CORRECTION.value,
             band_descriptor="Text Correction",
-            response_format=ResponseFormat.JSON_OBJECT,
+            response_format=ResponseFormat.JSON_OBJECT.value,
             answer=self.answer))
 
         return prompts
 
-    def answer_validation(self, response: Any, prompt: Prompt):
-        if prompt.response_type == FeedbackType.SCORE_AND_EXPLANATION:
-            try:
-                self.feedback[prompt.band_descriptor] = BandDescriptorFeedback(**json.loads(response)).dict()
-            except ValidationError as e:
-                logger.error(f"Invalid response format for Band Descriptor Feedback: {response}. Trace: {str(e)}")
-                raise InvalidResponseFormat
-            except JSONDecodeError as e:
-                logger.error("Not valid JSON for OpenAI response")
-                raise InvalidResponseFormat
-            except Exception as e:
-                logger.error(f"Unexpected exception occurred. Trace: {str(e)}")
-                raise
-        if prompt.response_type == FeedbackType.TEXT_CORRECTION:
-            try:
-                self.feedback[prompt.band_descriptor] = WritingTextCorrectionFeedback(**json.loads(response)).dict()[
-                    "feedback"]
-            except Exception as e:
-                logger.error(f"Invalid response format for Writing Text Correction: {response}. Trace: {str(e)}")
-                raise
+
+def gpt_request(prompt):
+    response = openai.chat.completions.create(
+        model=GPT_MODEL,
+        messages=[
+            {
+                "role": "system",
+                "content": prompt["prompt_message"]
+            },
+            {
+                "role": "user",
+                "content": prompt["answer"]
+            }
+        ],
+        temperature=1,
+        max_tokens=COMPLETION_TOKENS,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        seed=prompt["seed"],
+        response_format={"type": prompt["response_format"]}
+    )
+    response = response.choices[0].message.content
+    feedback = answer_validation(response, prompt)
+    return {prompt["band_descriptor"]: feedback}
+
+
+def answer_validation(response: Any, prompt: Prompt):
+    if prompt["response_type"] == FeedbackType.SCORE_AND_EXPLANATION.value:
+        try:
+            feedback = BandDescriptorFeedback(**json.loads(response)).model_dump()
+        except ValidationError as e:
+            logger.error(f"Invalid response format for Band Descriptor Feedback: {response}. Trace: {str(e)}")
+            raise InvalidResponseFormat
+        except JSONDecodeError as e:
+            logger.error("Not valid JSON for OpenAI response")
+            raise InvalidResponseFormat
+        except Exception as e:
+            logger.error(f"Unexpected exception occurred. Trace: {str(e)}")
+            raise
+    if prompt["response_type"] == FeedbackType.TEXT_CORRECTION.value:
+        try:
+            feedback = WritingTextCorrectionFeedback(**json.loads(response)).model_dump()["feedback"]
+        except Exception as e:
+            logger.error(f"Invalid response format for Writing Text Correction: {response}. Trace: {str(e)}")
+            raise
+    return feedback
