@@ -2,27 +2,31 @@ import json
 import logging
 import os
 import re
+import io
+from abc import ABC, abstractmethod
 from enum import Enum
 from json import JSONDecodeError
-from typing import Type, Dict, Any
+from typing import Dict, Any
 
 from celery import Celery, group
+from celery.utils.log import get_task_logger
+from celery import signals
 import openai
+from openai import OpenAIError, RateLimitError, AuthenticationError
 import structlog
+from fastapi import UploadFile
 from pydantic import ValidationError
 
 from app.schemas import WritingTextCorrectionFeedback, BandDescriptorFeedback
-from celery.utils.log import get_task_logger
-
-from celery import signals
 from .config.logging_config import celery_logger as logger
+
 
 openai.api_key = os.getenv("OPENAI_KEY")
 REDIS_BROKER = os.getenv("REDIS_BROKER")
 REDIS_BACKEND = os.getenv("REDIS_BACKEND")
 SEED = 1
-COMPLETION_TOKENS = 2500
-MAX_TOKENS = 4050
+COMPLETION_TOKENS = 1500  # 2500
+MAX_TOKENS = 3000  # 4050
 GPT_MODEL = os.getenv("GPT_MODEL")
 
 
@@ -31,6 +35,7 @@ def supress(**kwargs):
     logger = logging.getLogger()
     for handler in logger.handlers:
         handler.setFormatter(StructlogFormatter())
+
 
 celery_app = Celery(
     "celery_worker",
@@ -47,6 +52,7 @@ class StructlogFormatter(logging.Formatter):
 
     def format(self, record):
         log_dict = {
+            'component': "celery_app",
             'event': record.getMessage(),
             'level': record.levelname.lower(),
             'timestamp': self.formatTime(record, self.datefmt),
@@ -55,13 +61,14 @@ class StructlogFormatter(logging.Formatter):
 
         if re.match("celery.*", record.name) and "return_value" in record.args:
             try:
-                message_as_json = json.loads(re.sub("'", "\"", record.args["return_value"]))
+                return_value = record.args["return_value"]
+                message_as_json = json.loads(re.sub("'", "\"", return_value))
                 if isinstance(message_as_json, dict):
                     log_dict['data'] = message_as_json
                     record.args["return_value"] = "see data section for returned JSON"
                     log_dict['event'] = record.getMessage()
             except (json.JSONDecodeError, TypeError):
-                pass
+                log_dict["event"] = return_value
         return self.processor(get_task_logger(__name__), "anc", log_dict)
 
 
@@ -94,6 +101,16 @@ class InvalidResponseFormat(Exception):
     pass
 
 
+class FileReadError(Exception):
+    """Unable to read audio file and put in BytesIO"""
+    pass
+
+
+class NonRetryableError(Exception):
+    """Error on which task should not be retried"""
+    pass
+
+
 @celery_app.task(bind=True,
                  autoretry_for=(InvalidResponseFormat,),
                  retry_backoff=True,
@@ -102,26 +119,32 @@ class InvalidResponseFormat(Exception):
 def get_feedback(self, prompt):
     if self.request.retries > 0:
         prompt.seed += 1
-    feedback = gpt_request(prompt=prompt)
+    feedback = gpt_feedback_request(prompt=prompt)
     return feedback
 
 
-def evaluate_answer(question_type: QuestionType,
-                    question_part: str,
-                    question: str,
-                    answer: str,
-                    band_descriptors: Dict,
-                    band_score_prompt_template: str,
-                    writing_correction_prompt_template: str):
-    answer_evaluator = AnswerEvaluator(question_part, question_type, question,
-                                       answer, band_descriptors, band_score_prompt_template,
-                                       writing_correction_prompt_template)
-    prompts = answer_evaluator.get_prompts()
-    feedback_tasks = [get_feedback.s(prompt.to_dict()) for prompt in prompts]
+def transcribe_audio(file: UploadFile):
+    try:
+        audio_contents = file.file.read()
+        buffer = io.BytesIO(audio_contents)
+        buffer.name = file.filename
+    except Exception as e:
+        logger.error(f"Error reading file: {e}")
+        raise NonRetryableError(f"Error reading file: {e}") from e
 
-    result = group(feedback_tasks).apply_async()
-    result.save()
-    return result.id
+    try:
+        answer = openai.audio.transcriptions.create(file=buffer, model="whisper-1",
+                                                    response_format="text")
+        return answer
+    except RateLimitError as e:
+        logger.error(f"Rate limit error: {e}")
+        raise NonRetryableError(f"Rate limit error: {e}") from e
+    except AuthenticationError as e:
+        logger.error(f"Authentication error: {e}")
+        raise NonRetryableError(f"Authentication error: {e}") from e
+    except OpenAIError as e:
+        logger.error(f"OpenAI error occurred: {e}")
+        raise
 
 
 class Prompt:
@@ -148,22 +171,19 @@ class Prompt:
         return json.dumps(self.to_dict())
 
 
-class AnswerEvaluator:
-
+class BaseAnswerEvaluator(ABC):
     def __init__(self, question_part: str, question_type: QuestionType,
-                 question: str, answer: str,
-                 band_descriptors: Dict, band_score_prompt_template: str,
-                 writing_correction_prompt_template: str):
+                 question: str, answer: str | UploadFile,
+                 band_descriptors: Dict, band_score_prompt_template: str):
         self.question = question
         self.question_part = question_part
         self.answer = answer
         self.feedback = {}
         self.question_type = question_type
-
         self.band_descriptors = band_descriptors
         self.band_score_prompt_template = band_score_prompt_template
-        self.writing_correction_prompt_template = writing_correction_prompt_template
 
+    @abstractmethod
     def get_prompts(self):
         descriptors = self.band_descriptors["sections"][self.question_type]["parts"][self.question_part]["descriptors"]
 
@@ -183,6 +203,28 @@ class AnswerEvaluator:
             ) for x in descriptors
         ]
 
+        return prompts
+
+    def register_evaluation_task(self):
+        prompts = self.get_prompts()
+        feedback_tasks = [get_feedback.s(prompt.to_dict()) for prompt in prompts]
+        result = group(feedback_tasks).apply_async()
+        result.save()
+        return result.id
+
+
+class WritingAnswerEvaluator(BaseAnswerEvaluator):
+
+    def __init__(self, question_part: str, question_type: QuestionType,
+                 question: str, answer: str,
+                 band_descriptors: Dict, band_score_prompt_template: str,
+                 writing_correction_prompt_template: str):
+        super().__init__(question_part, question_type, question, answer, band_descriptors,
+                         band_score_prompt_template)
+        self.writing_correction_prompt_template = writing_correction_prompt_template
+
+    def get_prompts(self):
+        prompts = super().get_prompts()
         prompts.append(Prompt(
             prompt_message=self.writing_correction_prompt_template.format(question_part=self.question_part),
             response_type=FeedbackType.TEXT_CORRECTION.value,
@@ -193,7 +235,24 @@ class AnswerEvaluator:
         return prompts
 
 
-def gpt_request(prompt):
+class SpeakingAnswerEvaluator(BaseAnswerEvaluator):
+
+    def __init__(self, question_part: str, question_type: QuestionType,
+                 question: str, answer: UploadFile,
+                 band_descriptors: Dict, band_score_prompt_template: str):
+        super().__init__(question_part, question_type, question, answer, band_descriptors,
+                         band_score_prompt_template)
+
+    def get_prompts(self):
+        return super().get_prompts()
+
+    def register_evaluation_task(self):
+        answer = transcribe_audio(file=self.answer)
+        self.answer = answer
+        return super().register_evaluation_task()
+
+
+def gpt_feedback_request(prompt):
     response = openai.chat.completions.create(
         model=GPT_MODEL,
         messages=[
@@ -224,11 +283,12 @@ def answer_validation(response: Any, prompt: Prompt):
         try:
             feedback = BandDescriptorFeedback(**json.loads(response)).model_dump()
         except ValidationError as e:
-            logger.error(f"Invalid response format for Band Descriptor Feedback: {response}. Trace: {str(e)}")
-            raise InvalidResponseFormat
+            logger.error(f"Invalid response format for Band Descriptor Feedback: {response}. "
+                         f"Trace: {str(e)}")
+            raise InvalidResponseFormat from e
         except JSONDecodeError as e:
             logger.error("Not valid JSON for OpenAI response")
-            raise InvalidResponseFormat
+            raise InvalidResponseFormat from e
         except Exception as e:
             logger.error(f"Unexpected exception occurred. Trace: {str(e)}")
             raise
@@ -236,6 +296,7 @@ def answer_validation(response: Any, prompt: Prompt):
         try:
             feedback = WritingTextCorrectionFeedback(**json.loads(response)).model_dump()["feedback"]
         except Exception as e:
-            logger.error(f"Invalid response format for Writing Text Correction: {response}. Trace: {str(e)}")
+            logger.error(f"Invalid response format for Writing Text Correction: {response}. "
+                         f"Trace: {str(e)}")
             raise
     return feedback

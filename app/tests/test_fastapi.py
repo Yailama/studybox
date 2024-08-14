@@ -4,7 +4,6 @@ import pytest
 from fastapi.testclient import TestClient
 from app.main import app
 
-# Create a TestClient instance
 client = TestClient(app)
 
 
@@ -17,7 +16,7 @@ def group_result_mock(data):
     return mock_response
 
 
-valid_endpoint_output = {
+valid_writing_output = {
     "Task Achievement": {
       "score": 4,
       "feedback": "Feedback here."
@@ -58,7 +57,7 @@ valid_endpoint_output = {
     ]
   }
 
-valid_group_output = [
+valid_writing_celery_output = [
     {
         "Task Achievement": {
             "score": 4,
@@ -109,6 +108,42 @@ valid_group_output = [
     }
 ]
 
+valid_speaking_output = {
+    "Fluency and Coherence": {
+      "score": 4,
+      "feedback": "Feedback here."
+    },
+    "Lexical Resource": {
+      "score": 4,
+      "feedback": "Feedback here."
+    },
+    "Grammatical Range & Accuracy": {
+      "score": 5,
+      "feedback": "Feedback here."
+    }
+  }
+
+valid_speaking_celery_output = [
+    {
+        "Fluency and Coherence": {
+            "score": 4,
+            "feedback": "Feedback here."
+        }
+    },
+    {
+        "Lexical Resource": {
+            "score": 4,
+            "feedback": "Feedback here."
+        }
+    },
+    {
+        "Grammatical Range & Accuracy": {
+            "score": 5,
+            "feedback": "Feedback here."
+        }
+    }
+]
+
 test_data = [
     ({
         "ready": False,
@@ -124,8 +159,14 @@ test_data = [
         "ready": True,
         "successful": True,
         "failed": False,
-        "results": valid_group_output
-    }, 200, valid_endpoint_output)
+        "results": valid_writing_celery_output
+    }, 200, valid_writing_output),
+    ({
+         "ready": True,
+         "successful": True,
+         "failed": False,
+         "results": valid_speaking_celery_output
+     }, 200, valid_speaking_output)
 ]
 
 

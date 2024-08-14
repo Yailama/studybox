@@ -12,13 +12,13 @@ class WritingAnswer(AnswerBase):
     question_part: Literal["1", "2"]
 
 
-class SpeakingAnswer(AnswerBase):
-    question_type: Literal["speaking"]
-    question_part: Literal["1", "2", "3"]
+# class SpeakingAnswer(AnswerBase):
+#     question_type: Literal["speaking"]
+#     question_part: Literal["1", "2", "3"]
 
 
 class AnswerIn(BaseModel):
-    task: Union[WritingAnswer | SpeakingAnswer]
+    task: WritingAnswer
 
 
 class TaskRegistration(BaseModel):
@@ -60,7 +60,8 @@ class WritingBandDescriptors(BaseModel):
                              "Grammatical Range & Accuracy",
                              }
             keys = {x['name'] for x in data['descriptors']}
-            assert keys_to_check == keys, f'Expected exactly Writing Band Descriptors: {keys_to_check}, got {keys}'
+            assert keys_to_check == keys, f'Expected exactly Writing Band Descriptors: ' \
+                                          f'{keys_to_check}, got {keys}'
 
         return data
 
@@ -72,9 +73,11 @@ class SpeakingBandDescriptors(BaseModel):
     @classmethod
     def check_keys(cls, data: Any) -> Any:
         if isinstance(data, dict):
-            keys_to_check = {"Fluency and Coherence", "Lexical Resource", "Grammatical Range & Accuracy"}
+            keys_to_check = {"Fluency and Coherence", "Lexical Resource",
+                             "Grammatical Range & Accuracy"}
             keys = {x['name'] for x in data['descriptors']}
-            assert keys_to_check == keys, f'Expected exactly Speaking Band Descriptors: {keys_to_check}, got {keys}'
+            assert keys_to_check == keys, f'Expected exactly Speaking Band Descriptors: ' \
+                                          f'{keys_to_check}, got {keys}'
 
         return data
 
@@ -91,14 +94,15 @@ class BandDescriptors(BaseModel):
     def check_keys(cls, data: Any) -> Any:
         if isinstance(data, dict):
             sections = set(data["sections"].keys())
-            assert sections == {"writing", "speaking"}, f"Expected sections: writing, speaking, got {sections}"
+            assert sections == {"writing", "speaking"}, f"Expected sections: writing, " \
+                                                        f"speaking, got {sections}"
 
             writing_parts = set(data["sections"]["writing"]["parts"].keys())
             speaking_parts = set(data["sections"]["speaking"]["parts"].keys())
 
             assert writing_parts == {"1", "2"}, f"Expected parts: 1, 2 got {writing_parts}"
-            assert speaking_parts == {
-                "1"}, f"Expected parts: 1 got {speaking_parts}. All speaking parts use sane band descriptor"
+            assert speaking_parts == {"1"}, f"Expected parts: 1 got {speaking_parts}. " \
+                                            f"All speaking parts use sane band descriptor"
 
         return data
 
@@ -145,16 +149,14 @@ class WritingFeedbackOut(BaseModel):
     coherence_and_cohesion: BandDescriptorFeedback = Field(alias="Coherence & Cohesion")
     lexical_resource: BandDescriptorFeedback = Field(alias="Lexical Resource")
     grammar: BandDescriptorFeedback = Field(alias="Grammatical Range & Accuracy")
-    text_correction: List[Union[WritingTextCorrectionMistake, WritingTextCorrectionStrength]] = Field(
-        alias="Text Correction")
+    text_correction: List[Union[WritingTextCorrectionMistake, WritingTextCorrectionStrength]] = \
+        Field(alias="Text Correction")
 
 
 class SpeakingFeedbackOut(BaseModel):
     fluency_and_cohesion: BandDescriptorFeedback = Field(alias="Fluency and Coherence")
     lexical_resource: BandDescriptorFeedback = Field(alias="Lexical Resource")
     grammar: BandDescriptorFeedback = Field(alias="Grammatical Range & Accuracy")
-    text_correction: List[Union[WritingTextCorrectionMistake, WritingTextCorrectionStrength]] = Field(
-        alias="Text Correction")
 
     class Config:
         allow_population_by_field_name = True
