@@ -9,7 +9,6 @@ from json import JSONDecodeError
 from typing import Dict, Any
 
 from celery import Celery, group
-from celery.utils.log import get_task_logger
 from celery import signals
 import openai
 from openai import OpenAIError, RateLimitError, AuthenticationError
@@ -69,8 +68,7 @@ class StructlogFormatter(logging.Formatter):
                     log_dict['event'] = record.getMessage()
             except (json.JSONDecodeError, TypeError):
                 log_dict["event"] = return_value
-        return self.processor(get_task_logger(__name__), "anc", log_dict)
-
+        return json.dumps(log_dict)
 
 @signals.task_prerun.connect
 def on_task_prerun(sender, task_id, task, args, kwargs, **_):
