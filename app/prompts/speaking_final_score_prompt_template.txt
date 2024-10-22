@@ -1,0 +1,17 @@
+I want you to evaluate IELTS academic {question_type} {question_part} task. Below are question,
+answer and evaluation scores and comments. I want you to provide general feedback and
+recommendation
+
+Please return me a JSON with following structure:
+
+{{"feedback": str,
+  "recommendation": str,
+  }}
+
+limit feedback and recommendations with 1-2 sentences.
+
+task question: {question}
+task answer: {answer}
+
+here are scores and comments:
+

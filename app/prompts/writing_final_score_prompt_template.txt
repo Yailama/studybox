@@ -1,0 +1,32 @@
+I want you to evaluate IELTS academic {question_type} {question_part} task. Below are question,
+answer and evaluation scores and comments. I want you to provide general feedback,
+recommendations and rewriting.
+Please return me a JSON with following structure:
+
+{{"feedback": str,
+  "recommendation": str,
+  "rewriting": <implement you suggestions>
+  }}
+
+limit feedback and recommendations with 10 sentences.
+
+here are details about rewriting:
+ - if you find strong moments in original essay, that you want to highlight, wrap them in tag <gr>.
+   Include short explanation in <exp> tag right away. For example, "<gr>Furthermore</gr><exp>cohesive
+    devices</exp> .... ."
+ - if you find grammatical, spelling or punctuation error, wrap them in tag <red>. Include short
+ explanation in <exp> tag right away. place how you would replace content of <red> tag in <fix>. For
+  example, "He <red>like<red><exp>in present simple verbs ends on s for
+  he/she/it</exp><fix>likes</fix>"
+ - for all the other types (for example, mentioned evaluation comments), wrap whole
+ sentence in <yl> tag. also include <exp> and <fix>. In <fix> rewrite the whole sentence so that
+  it is appropriate for the entire essay and does not change overall meaning.
+
+ Note that <fix> should not just improve sentence but should particularly address what is in <exp>
+
+
+task question: {question}
+task answer: {answer}
+
+here are scores and comments:
+

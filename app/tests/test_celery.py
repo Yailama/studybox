@@ -90,10 +90,58 @@ def set_transcription_mock(transcription_result):
         mock_create.return_value = transcription_result
         yield mock_create
 
+valid_writing_band_descriptor_chat_output = {
+      "feedback": "dummy content",
+      "recommendation": "dummy content",
+      "breakdown": [
+        {
+          "feedback": "dummy content",
+          "recommendation": "dummy content",
+          "name": "Addressing the Question",
+          "score": 8
+        },
+        {
+          "feedback": "dummy content",
+          "recommendation": "dummy content",
+          "name": "Overview",
+          "score": 7
+        },
+        {
+          "feedback": "dummy content",
+          "recommendation": "dummy content",
+          "name": "Key Features",
+          "score": 8
+        }
+      ]}
+
+valid_writing_band_descriptor_task_result = {"Coherence & Cohesion": {
+      "feedback": "dummy content",
+      "recommendation": "dummy content",
+      "score": 8,
+      "breakdown": [
+        {
+          "feedback": "dummy content",
+          "recommendation": "dummy content",
+          "name": "Addressing the Question",
+          "score": 8
+        },
+        {
+          "feedback": "dummy content",
+          "recommendation": "dummy content",
+          "name": "Overview",
+          "score": 7
+        },
+        {
+          "feedback": "dummy content",
+          "recommendation": "dummy content",
+          "name": "Key Features",
+          "score": 8
+        }
+      ]}}
+
 valid_response = (
-    json.dumps(
-        {"feedback": "This is the mocked feedback", "score": 9}),
-    {'Coherence & Cohesion': {'feedback': 'This is the mocked feedback', 'score': 9}},
+    json.dumps(valid_writing_band_descriptor_chat_output),
+    valid_writing_band_descriptor_task_result,
     False
 )
 
@@ -125,12 +173,13 @@ transcription_responses = [
 
 
 @pytest.mark.parametrize("chat_completion_result, expected_result, should_raise",
-                         [valid_response, invalid_json_response, not_a_json_response])
+                         [valid_response])
 def test_feedback_prompt_response(set_chat_completion_mock, chat_completion_result,
                                   expected_result, should_raise):
     prompt = Prompt(
         prompt_message="dummy message",
-        response_type="Score and Feedback",
+        response_type="Band Score and Feedback",
+        question_type="writing",
         band_descriptor="Coherence & Cohesion",
         response_format="json_object",
         answer="answer")

@@ -6,62 +6,202 @@
           "descriptors": [
             {
               "name": "Task Achievement",
-              "scores": {
-                "9": "The prompt is appropriately addressed and explored in depth. A clear and fully developed position is presented which directly answers the question/s. Ideas are relevant, fully extended and well supported. Any lapses in content or support are extremely rare.",
-                "8": "The prompt is appropriately and sufficiently addressed. A clear and well-developed position is presented in response to the question/s. Ideas are relevant, well extended and supported. There may be occasional omissions or lapses in content.",
-                "7": "The main parts of the prompt are appropriately addressed. A clear and developed position is presented. Main ideas are extended and supported but there may be a tendency to over-generalise or there may be a lack of focus and precision in supporting ideas/material.",
-                "6": "The main parts of the prompt are addressed (though some may be more fully covered than others). An appropriate format is used. A position is presented that is directly relevant to the prompt, although the conclusions drawn may be unclear, unjustified or repetitive. Main ideas are relevant, but some may be insufficiently developed or may lack clarity, while some supporting arguments and evidence may be less relevant or inadequate.",
-                "5": "The main parts of the prompt are incompletely addressed. The format may be inappropriate in places. The writer expresses a position, but the development is not always clear. Some main ideas are put forward, but they are limited and are not sufficiently developed and/or there may be irrelevant detail. There may be some repetition.",
-                "4": "The prompt is tackled in a minimal way, or the answer is tangential, possibly due to some misunderstanding of the prompt. The format may be inappropriate. A position is discernible, but the reader has to read carefully to find it. Main ideas are difficult to identify and such ideas that are identifiable may lack relevance, clarity and/or support. Large parts of the response may be repetitive.",
-                "3": "No part of the prompt is adequately addressed, or the prompt has been misunderstood. No relevant position can be identified, and/or there is little direct response to the question/s. There are few ideas, and these may be irrelevant or insufficiently developed.",
-                "2": "The content is barely related to the prompt. No position can be identified. There may be glimpses of one or two ideas without development.",
-                "1": "Responses of 20 words or fewer are rated at Band 1. The content is wholly unrelated to the prompt. Any copied rubric must be discounted",
-                "0": "Should only be used where a candidate did not attend or attempt the question in any way, used a language other than English throughout, or where there is proof that a candidate’s answer has been totally memorised."
+              "band_breakdown": {
+                "Addressing the Question": {
+                  "9": "Fully addresses all parts of the task.",
+                  "8": "Addresses all parts of the task.",
+                  "7": "Addresses the task well.",
+                  "6": "Addresses the task; presents an overview.",
+                  "5": "May only partially address the task.",
+                  "4": "Fails to address the task adequately.",
+                  "3": "No real attempt to address the task.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Overview": {
+                  "9": "Clearly presents a fully developed overview.",
+                  "8": "Presents a clear overview.",
+                  "7": "Presents an overview but may be somewhat unclear.",
+                  "6": "Overview is present but may lack detail.",
+                  "5": "Limited or unclear overview.",
+                  "4": "No clear overview is presented.",
+                  "3": "No attempt at an overview.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Key Features": {
+                  "9": "Selects and highlights key features effectively.",
+                  "8": "Identifies key features.",
+                  "7": "Identifies key features but may lack detail.",
+                  "6": "Key features are present but may be unclear.",
+                  "5": "Few relevant key features identified.",
+                  "4": "Limited identification of key features.",
+                  "3": "No relevant features identified.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                }
               }
             },
             {
               "name": "Coherence & Cohesion",
-              "scores": {
-                "9": "The message can be followed effortlessly. Cohesion is used in such a way that it very rarely attracts attention. Any lapses in coherence or cohesion are minimal. Paragraphing is skilfully managed.",
-                "8": "The message can be followed with ease. Information and ideas are logically sequenced, and cohesion is well managed. Occasional lapses in coherence and cohesion may occur. Paragraphing is used sufficiently and appropriately.",
-                "7": "Information and ideas are logically organised, and there is a clear progression throughout the response. (A few lapses may occur, but these are minor.) A range of cohesive devices including reference and substitution is used flexibly but with some inaccuracies or some over/under use. Paragraphing is generally used effectively to support overall coherence, and the sequencing of ideas within a paragraph is generally logical.",
-                "6": "Information and ideas are generally arranged coherently and there is a clear overall progression. Cohesive devices are used to some good effect but cohesion within and/or between sentences may be faulty or mechanical due to misuse, overuse or omission. The use of reference and substitution may lack flexibility or clarity and result in some repetition or error. Paragraphing may not always be logical and/or the central topic may not always be clear.",
-                "5": "Organisation is evident but is not wholly logical and there may be a lack of overall progression. Nevertheless, there is a sense of underlying coherence to the response. The relationship of ideas can be followed but the sentences are not fluently linked to each other. There may be limited/overuse of cohesive devices with some inaccuracy. The writing may be repetitive due to inadequate and/or inaccurate use of reference and substitution. Paragraphing may be inadequate or missing.",
-                "4": "Information and ideas are evident but not arranged coherently and there is no clear progression within the response. Relationships between ideas can be unclear and/or inadequately marked. There is some use of basic cohesive devices, which may be inaccurate or repetitive. There is inaccurate use or a lack of substitution or referencing. There may be no paragraphing and/or no clear main topic within paragraphs.",
-                "3": "There is no apparent logical organisation. Ideas are discernible but difficult to relate to each other. There is minimal use of sequencers or cohesive devices. Those used do not necessarily indicate a logical relationship between ideas. There is difficulty in identifying referencing. Any attempts at paragraphing are unhelpful.",
-                "2": "There is little relevant message, or the entire response may be off-topic. There is little evidence of control of organisational features.",
-                "1": "Responses of 20 words or fewer are rated at Band 1. The writing fails to communicate any message and appears to be by a virtual non-writer.",
-                "0": "Should only be used where a candidate did not attend or attempt the question in any way, used a language other than English throughout, or where there is proof that a candidate’s answer has been totally memorised."
+              "band_breakdown": {
+                "Cohesion Devices": {
+                  "9": "Uses cohesion in such a way that it attracts no attention.",
+                  "8": "Uses cohesive devices effectively; sequences information logically.",
+                  "7": "Some cohesive devices may be used inaccurately.",
+                  "6": "Uses a mix of cohesive devices; may lack clarity in parts.",
+                  "5": "Lacks cohesion; may be difficult to follow.",
+                  "4": "Does not use cohesive devices effectively.",
+                  "3": "No cohesive devices used.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Logical Flow of Ideas": {
+                  "9": "Ideas are logically organized.",
+                  "8": "Sequences information and ideas logically.",
+                  "7": "Ideas are logically organized but may have minor lapses.",
+                  "6": "Generally organized but may lack clarity.",
+                  "5": "Ideas may be poorly organized.",
+                  "4": "Lack of clear organization; confusing.",
+                  "3": "No logical flow of ideas.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Paragraphing": {
+                  "9": "Uses paragraphs effectively to structure ideas.",
+                  "8": "Paragraphs are logically organized and effective.",
+                  "7": "Mostly effective paragraphing; some may lack focus.",
+                  "6": "Basic paragraphing but may lack clarity.",
+                  "5": "Poorly organized paragraphs; ideas may overlap.",
+                  "4": "Paragraphing is not used effectively.",
+                  "3": "No effective paragraphing.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Presence of Lapses": {
+                  "9": "No lapses in cohesion or coherence.",
+                  "8": "Occasional lapses that do not impede understanding.",
+                  "7": "Some lapses that do not significantly affect clarity.",
+                  "6": "Regular lapses that may cause confusion.",
+                  "5": "Frequent lapses that lead to misunderstanding.",
+                  "4": "Consistent lapses that confuse the reader.",
+                  "3": "No cohesion or coherence.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                }
               }
             },
             {
               "name": "Lexical Resource",
-              "scores": {
-                "9": "Full flexibility and precise use are widely evident. A wide range of vocabulary is used accurately and appropriately with very natural and sophisticated control of lexical features. Minor errors in spelling and word formation are extremely rare and have minimal impact on communication.",
-                "8": "A wide resource is fluently and flexibly used to convey precise meanings. There is skilful use of uncommon and/or idiomatic items when appropriate, despite occasional inaccuracies in word choice and collocation. Occasional errors in spelling and/or word formation may occur, but have minimal impact on communication.",
-                "7": "The resource is sufficient to allow some flexibility and precision. There is some ability to use less common and/or idiomatic items. An awareness of style and collocation is evident, though inappropriacies occur. There are only a few errors in spelling and/or word formation and they do not detract from overall clarity.",
-                "6": "The resource is generally adequate and appropriate for the task. The meaning is generally clear in spite of a rather restricted range or a lack of precision in word choice. If the writer is a risk-taker, there will be a wider range of vocabulary used but higher degrees of inaccuracy or inappropriacy. There are some errors in spelling and/or word formation, but these do not impede communication.",
-                "5": "The resource is limited but minimally adequate for the task. Simple vocabulary may be used accurately but the range does not permit much variation in expression. There may be frequent lapses in the appropriacy of word choice and a lack of flexibility is apparent in frequent simplifications and/or repetitions. Errors in spelling and/or word formation may be noticeable and may cause some difficulty for the reader.",
-                "4": "The resource is limited and inadequate for or unrelated to the task. Vocabulary is basic and may be used repetitively. There may be inappropriate use of lexical chunks (e.g. memorised phrases, formulaic language and/or language from the input material). Inappropriate word choice and/or errors in word formation and/or in spelling may impede meaning.",
-                "3": "The resource is inadequate (which may be due to the response being significantly underlength). Possible over-dependence on input material or memorised language. Control of word choice and/or spelling is very limited, and errors predominate. These errors may severely impede meaning.",
-                "2": "The resource is extremely limited with few recognisable strings, apart from memorised phrases. There is no apparent control of word formation and/or spelling.",
-                "1": "Responses of 20 words or fewer are rated at Band 1. No resource is apparent, except for a few isolated words.",
-                "0": "Should only be used where a candidate did not attend or attempt the question in any way, used a language other than English throughout, or where there is proof that a candidate’s answer has been totally memorised."
+              "band_breakdown": {
+                "Range of Vocabulary": {
+                  "9": "Uses a wide range of vocabulary.",
+                  "8": "Uses a wide range of vocabulary; occasional inappropriacies.",
+                  "7": "Sufficient range of vocabulary to allow flexibility.",
+                  "6": "Adequate vocabulary; may show some errors.",
+                  "5": "Limited vocabulary; frequent errors.",
+                  "4": "Very limited range of vocabulary.",
+                  "3": "Uses only basic vocabulary.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Appropriateness of Vocabulary": {
+                  "9": "Vocabulary is used with very natural control.",
+                  "8": "Vocabulary is generally appropriate.",
+                  "7": "Vocabulary is mostly appropriate.",
+                  "6": "Some vocabulary choices may be inappropriate.",
+                  "5": "Frequent errors in word choice.",
+                  "4": "Vocabulary fails to convey meaning.",
+                  "3": "Very few appropriate words used.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Spelling Accuracy": {
+                  "9": "Spelling is correct with no errors.",
+                  "8": "Occasional spelling errors may occur.",
+                  "7": "Spelling errors are infrequent.",
+                  "6": "Some spelling errors; may cause confusion.",
+                  "5": "Frequent spelling errors.",
+                  "4": "Frequent errors that cause misunderstanding.",
+                  "3": "Very limited spelling accuracy.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Use of Collocations and Phrases": {
+                  "9": "Uses collocations and phrases effectively.",
+                  "8": "Generally uses collocations appropriately.",
+                  "7": "Some collocations are used effectively.",
+                  "6": "Limited use of collocations.",
+                  "5": "Rarely uses collocations accurately.",
+                  "4": "Very few collocations used.",
+                  "3": "No effective use of collocations.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                }
               }
             },
             {
               "name": "Grammatical Range & Accuracy",
-              "scores": {
-                "9": "A wide range of structures is used with full flexibility and control. Punctuation and grammar are used appropriately throughout. Minor errors are extremely rare and have minimal impact on communication.",
-                "8": "A wide range of structures is flexibly and accurately used. The majority of sentences are error-free, and punctuation is well managed. Occasional, non-systematic errors and inappropriacies occur, but have minimal impact on communication.",
-                "7": "A variety of complex structures is used with some flexibility and accuracy. Grammar and punctuation are generally well controlled, and error-free sentences are frequent. A few errors in grammar may persist, but these do not impede communication.",
-                "6": "A mix of simple and complex sentence forms is used but flexibility is limited. Examples of more complex structures are not marked by the same level of accuracy as in simple structures. Errors in grammar and punctuation occur, but rarely impede communication.",
-                "5": "The range of structures is limited and rather repetitive. Although complex sentences are attempted, they tend to be faulty, and the greatest accuracy is achieved on simple sentences. Grammatical errors may be frequent and cause some difficulty for the reader. Punctuation may be faulty.",
-                "4": "A very limited range of structures is used. Subordinate clauses are rare and simple sentences predominate. Some structures are produced accurately but grammatical errors are frequent and may impede meaning. Punctuation is often faulty or inadequate.",
-                "3": "Sentence forms are attempted, but errors in grammar and punctuation predominate (except in memorised phrases or those taken from the input material). This prevents most meaning from coming through. Length may be insufficient to provide evidence of control of sentence forms.",
-                "2": "There is little or no evidence of sentence forms (except in memorised phrases).",
-                "1": "Responses of 20 words or fewer are rated at Band 1. No rateable language is evident.",
-                "0": "Should only be used where a candidate did not attend or attempt the question in any way, used a language other than English throughout, or where there is proof that a candidate’s answer has been totally memorised."
+              "band_breakdown": {
+                "Range of Sentence Structures": {
+                  "9": "Uses a wide range of structures with full flexibility.",
+                  "8": "Uses a variety of complex structures.",
+                  "7": "Uses a variety of sentence structures; some errors may be present.",
+                  "6": "Mix of simple and complex forms.",
+                  "5": "Limited range of structures.",
+                  "4": "Very few structures used correctly.",
+                  "3": "Minimal grammatical structures.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Accuracy of Grammar": {
+                  "9": "Full accuracy of grammatical structures.",
+                  "8": "High degree of accuracy with minor errors.",
+                  "7": "Errors do not impede communication.",
+                  "6": "Some grammatical errors cause confusion.",
+                  "5": "Frequent grammatical errors.",
+                  "4": "Many errors; often incorrect structures.",
+                  "3": "Errors severely limit communication.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Punctuation": {
+                  "9": "Punctuation is used accurately and effectively.",
+                  "8": "Uses punctuation effectively; minor errors.",
+                  "7": "Generally uses punctuation correctly.",
+                  "6": "Some punctuation errors may cause confusion.",
+                  "5": "Frequent punctuation errors.",
+                  "4": "Punctuation errors disrupt clarity.",
+                  "3": "Very limited use of punctuation.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Errors": {
+                  "9": "No errors that impede understanding.",
+                  "8": "Rare errors that do not affect communication.",
+                  "7": "Some errors; generally clear.",
+                  "6": "Errors present that may confuse.",
+                  "5": "Frequent errors that affect clarity.",
+                  "4": "Errors are numerous; hard to understand.",
+                  "3": "Errors severely limit communication.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                }
               }
             }
           ]
@@ -70,62 +210,214 @@
           "descriptors": [
             {
               "name": "Task Achievement",
-              "scores": {
-                "9": "The prompt is appropriately addressed and explored in depth. A clear and fully developed position is presented which directly answers the question/s. Ideas are relevant, fully extended and well supported. Any lapses in content or support are extremely rare.",
-                "8": "The prompt is appropriately and sufficiently addressed. A clear and well-developed position is presented in response to the question/s. Ideas are relevant, well extended and supported. There may be occasional omissions or lapses in content.",
-                "7": "The main parts of the prompt are appropriately addressed. A clear and developed position is presented. Main ideas are extended and supported but there may be a tendency to over-generalise or there may be a lack of focus and precision in supporting ideas/material.",
-                "6": "The main parts of the prompt are addressed (though some may be more fully covered than others). An appropriate format is used. A position is presented that is directly relevant to the prompt, although the conclusions drawn may be unclear, unjustified or repetitive. Main ideas are relevant, but some may be insufficiently developed or may lack clarity, while some supporting arguments and evidence may be less relevant or inadequate.",
-                "5": "The main parts of the prompt are incompletely addressed. The format may be inappropriate in places. The writer expresses a position, but the development is not always clear. Some main ideas are put forward, but they are limited and are not sufficiently developed and/or there may be irrelevant detail. There may be some repetition.",
-                "4": "The prompt is tackled in a minimal way, or the answer is tangential, possibly due to some misunderstanding of the prompt. The format may be inappropriate. A position is discernible, but the reader has to read carefully to find it. Main ideas are difficult to identify and such ideas that are identifiable may lack relevance, clarity and/or support. Large parts of the response may be repetitive.",
-                "3": "No part of the prompt is adequately addressed, or the prompt has been misunderstood. No relevant position can be identified, and/or there is little direct response to the question/s. There are few ideas, and these may be irrelevant or insufficiently developed.",
-                "2": "The content is barely related to the prompt. No position can be identified. There may be glimpses of one or two ideas without development.",
-                "1": "Responses of 20 words or fewer are rated at Band 1. The content is wholly unrelated to the prompt. Any copied rubric must be discounted",
-                "0": "Should only be used where a candidate did not attend or attempt the question in any way, used a language other than English throughout, or where there is proof that a candidate’s answer has been totally memorised."
+              "band_breakdown": {
+                "Addressing the Question": {
+                  "9": "Fully addresses all parts of the task.",
+                  "8": "Addresses all parts of the task.",
+                  "7": "Addresses the task well.",
+                  "6": "Addresses the task; presents a position.",
+                  "5": "May only partially address the task.",
+                  "4": "Fails to address the task adequately.",
+                  "3": "No real attempt to address the task.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Argument Development": {
+                  "9": "Presents a well-developed response.",
+                  "8": "Presents a clear position throughout the response.",
+                  "7": "Presents a clear position but may lack some development.",
+                  "6": "Presents a position but may be unclear or underdeveloped.",
+                  "5": "Limited response; position may be unclear.",
+                  "4": "No clear position is presented.",
+                  "3": "No attempt to respond to the task.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Support and Examples": {
+                  "9": "Provides relevant, extended support for ideas.",
+                  "8": "Uses relevant examples to support points.",
+                  "7": "Uses some examples, though they may not always be fully developed.",
+                  "6": "Provides limited examples or support for points made.",
+                  "5": "Few relevant examples provided; may be too general.",
+                  "4": "Lacks relevant support or examples.",
+                  "3": "No examples or support are provided.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Conclusion": {
+                  "9": "Presents a clear and well-developed conclusion.",
+                  "8": "Conclusion is clear and relevant to the argument.",
+                  "7": "Conclusion is present but may lack clarity.",
+                  "6": "Conclusion may be too general or unclear.",
+                  "5": "Limited conclusion; may not summarize the argument.",
+                  "4": "No clear conclusion is presented.",
+                  "3": "No attempt at a conclusion.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                }
               }
             },
             {
               "name": "Coherence & Cohesion",
-              "scores": {
-                "9": "The message can be followed effortlessly. Cohesion is used in such a way that it very rarely attracts attention. Any lapses in coherence or cohesion are minimal. Paragraphing is skilfully managed.",
-                "8": "The message can be followed with ease. Information and ideas are logically sequenced, and cohesion is well managed. Occasional lapses in coherence and cohesion may occur. Paragraphing is used sufficiently and appropriately.",
-                "7": "Information and ideas are logically organised, and there is a clear progression throughout the response. (A few lapses may occur, but these are minor.) A range of cohesive devices including reference and substitution is used flexibly but with some inaccuracies or some over/under use. Paragraphing is generally used effectively to support overall coherence, and the sequencing of ideas within a paragraph is generally logical.",
-                "6": "Information and ideas are generally arranged coherently and there is a clear overall progression. Cohesive devices are used to some good effect but cohesion within and/or between sentences may be faulty or mechanical due to misuse, overuse or omission. The use of reference and substitution may lack flexibility or clarity and result in some repetition or error. Paragraphing may not always be logical and/or the central topic may not always be clear.",
-                "5": "Organisation is evident but is not wholly logical and there may be a lack of overall progression. Nevertheless, there is a sense of underlying coherence to the response. The relationship of ideas can be followed but the sentences are not fluently linked to each other. There may be limited/overuse of cohesive devices with some inaccuracy. The writing may be repetitive due to inadequate and/or inaccurate use of reference and substitution. Paragraphing may be inadequate or missing.",
-                "4": "Information and ideas are evident but not arranged coherently and there is no clear progression within the response. Relationships between ideas can be unclear and/or inadequately marked. There is some use of basic cohesive devices, which may be inaccurate or repetitive. There is inaccurate use or a lack of substitution or referencing. There may be no paragraphing and/or no clear main topic within paragraphs.",
-                "3": "There is no apparent logical organisation. Ideas are discernible but difficult to relate to each other. There is minimal use of sequencers or cohesive devices. Those used do not necessarily indicate a logical relationship between ideas. There is difficulty in identifying referencing. Any attempts at paragraphing are unhelpful.",
-                "2": "There is little relevant message, or the entire response may be off-topic. There is little evidence of control of organisational features.",
-                "1": "Responses of 20 words or fewer are rated at Band 1. The writing fails to communicate any message and appears to be by a virtual non-writer.",
-                "0": "Should only be used where a candidate did not attend or attempt the question in any way, used a language other than English throughout, or where there is proof that a candidate’s answer has been totally memorised."
+              "band_breakdown": {
+                "Cohesion Devices": {
+                  "9": "Uses cohesion in such a way that it attracts no attention.",
+                  "8": "Uses cohesive devices effectively; sequences information logically.",
+                  "7": "Some cohesive devices may be used inaccurately.",
+                  "6": "Uses a mix of cohesive devices; may lack clarity in parts.",
+                  "5": "Lacks cohesion; may be difficult to follow.",
+                  "4": "Does not use cohesive devices effectively.",
+                  "3": "No cohesive devices used.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Logical Flow of Ideas": {
+                  "9": "Ideas are logically organized.",
+                  "8": "Sequences information and ideas logically.",
+                  "7": "Ideas are logically organized but may have minor lapses.",
+                  "6": "Generally organized but may lack clarity.",
+                  "5": "Ideas may be poorly organized.",
+                  "4": "Lack of clear organization; confusing.",
+                  "3": "No logical flow of ideas.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Paragraphing": {
+                  "9": "Uses paragraphs effectively to structure ideas.",
+                  "8": "Paragraphs are logically organized and effective.",
+                  "7": "Mostly effective paragraphing; some may lack focus.",
+                  "6": "Basic paragraphing but may lack clarity.",
+                  "5": "Poorly organized paragraphs; ideas may overlap.",
+                  "4": "Paragraphing is not used effectively.",
+                  "3": "No effective paragraphing.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Presence of Lapses": {
+                  "9": "No lapses in cohesion or coherence.",
+                  "8": "Occasional lapses that do not impede understanding.",
+                  "7": "Some lapses that do not significantly affect clarity.",
+                  "6": "Regular lapses that may cause confusion.",
+                  "5": "Frequent lapses that lead to misunderstanding.",
+                  "4": "Consistent lapses that confuse the reader.",
+                  "3": "No cohesion or coherence.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                }
               }
             },
             {
               "name": "Lexical Resource",
-              "scores": {
-                "9": "Full flexibility and precise use are widely evident. A wide range of vocabulary is used accurately and appropriately with very natural and sophisticated control of lexical features. Minor errors in spelling and word formation are extremely rare and have minimal impact on communication.",
-                "8": "A wide resource is fluently and flexibly used to convey precise meanings. There is skilful use of uncommon and/or idiomatic items when appropriate, despite occasional inaccuracies in word choice and collocation. Occasional errors in spelling and/or word formation may occur, but have minimal impact on communication.",
-                "7": "The resource is sufficient to allow some flexibility and precision. There is some ability to use less common and/or idiomatic items. An awareness of style and collocation is evident, though inappropriacies occur. There are only a few errors in spelling and/or word formation and they do not detract from overall clarity.",
-                "6": "The resource is generally adequate and appropriate for the task. The meaning is generally clear in spite of a rather restricted range or a lack of precision in word choice. If the writer is a risk-taker, there will be a wider range of vocabulary used but higher degrees of inaccuracy or inappropriacy. There are some errors in spelling and/or word formation, but these do not impede communication.",
-                "5": "The resource is limited but minimally adequate for the task. Simple vocabulary may be used accurately but the range does not permit much variation in expression. There may be frequent lapses in the appropriacy of word choice and a lack of flexibility is apparent in frequent simplifications and/or repetitions. Errors in spelling and/or word formation may be noticeable and may cause some difficulty for the reader.",
-                "4": "The resource is limited and inadequate for or unrelated to the task. Vocabulary is basic and may be used repetitively. There may be inappropriate use of lexical chunks (e.g. memorised phrases, formulaic language and/or language from the input material). Inappropriate word choice and/or errors in word formation and/or in spelling may impede meaning.",
-                "3": "The resource is inadequate (which may be due to the response being significantly underlength). Possible over-dependence on input material or memorised language. Control of word choice and/or spelling is very limited, and errors predominate. These errors may severely impede meaning.",
-                "2": "The resource is extremely limited with few recognisable strings, apart from memorised phrases. There is no apparent control of word formation and/or spelling.",
-                "1": "Responses of 20 words or fewer are rated at Band 1. No resource is apparent, except for a few isolated words.",
-                "0": "Should only be used where a candidate did not attend or attempt the question in any way, used a language other than English throughout, or where there is proof that a candidate’s answer has been totally memorised."
+              "band_breakdown": {
+                "Range of Vocabulary": {
+                  "9": "Uses a wide range of vocabulary.",
+                  "8": "Uses a wide range of vocabulary; occasional inappropriacies.",
+                  "7": "Sufficient range of vocabulary to allow flexibility.",
+                  "6": "Adequate vocabulary; may show some errors.",
+                  "5": "Limited vocabulary; frequent errors.",
+                  "4": "Very limited range of vocabulary.",
+                  "3": "Uses only basic vocabulary.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Appropriateness of Vocabulary": {
+                  "9": "Vocabulary is used with very natural control.",
+                  "8": "Vocabulary is generally appropriate.",
+                  "7": "Vocabulary is mostly appropriate.",
+                  "6": "Some vocabulary choices may be inappropriate.",
+                  "5": "Frequent errors in word choice.",
+                  "4": "Vocabulary fails to convey meaning.",
+                  "3": "Very few appropriate words used.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Spelling Accuracy": {
+                  "9": "Spelling is correct with no errors.",
+                  "8": "Occasional spelling errors may occur.",
+                  "7": "Spelling errors are infrequent.",
+                  "6": "Some spelling errors; may cause confusion.",
+                  "5": "Frequent spelling errors.",
+                  "4": "Frequent errors that cause misunderstanding.",
+                  "3": "Very limited spelling accuracy.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Use of Collocations and Phrases": {
+                  "9": "Uses collocations and phrases effectively.",
+                  "8": "Generally uses collocations appropriately.",
+                  "7": "Some collocations are used effectively.",
+                  "6": "Limited use of collocations.",
+                  "5": "Rarely uses collocations accurately.",
+                  "4": "Very few collocations used.",
+                  "3": "No effective use of collocations.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                }
               }
             },
             {
               "name": "Grammatical Range & Accuracy",
-              "scores": {
-                "9": "A wide range of structures is used with full flexibility and control. Punctuation and grammar are used appropriately throughout. Minor errors are extremely rare and have minimal impact on communication.",
-                "8": "A wide range of structures is flexibly and accurately used. The majority of sentences are error-free, and punctuation is well managed. Occasional, non-systematic errors and inappropriacies occur, but have minimal impact on communication.",
-                "7": "A variety of complex structures is used with some flexibility and accuracy. Grammar and punctuation are generally well controlled, and error-free sentences are frequent. A few errors in grammar may persist, but these do not impede communication.",
-                "6": "A mix of simple and complex sentence forms is used but flexibility is limited. Examples of more complex structures are not marked by the same level of accuracy as in simple structures. Errors in grammar and punctuation occur, but rarely impede communication.",
-                "5": "The range of structures is limited and rather repetitive. Although complex sentences are attempted, they tend to be faulty, and the greatest accuracy is achieved on simple sentences. Grammatical errors may be frequent and cause some difficulty for the reader. Punctuation may be faulty.",
-                "4": "A very limited range of structures is used. Subordinate clauses are rare and simple sentences predominate. Some structures are produced accurately but grammatical errors are frequent and may impede meaning. Punctuation is often faulty or inadequate.",
-                "3": "Sentence forms are attempted, but errors in grammar and punctuation predominate (except in memorised phrases or those taken from the input material). This prevents most meaning from coming through. Length may be insufficient to provide evidence of control of sentence forms.",
-                "2": "There is little or no evidence of sentence forms (except in memorised phrases).",
-                "1": "Responses of 20 words or fewer are rated at Band 1. No rateable language is evident.",
-                "0": "Should only be used where a candidate did not attend or attempt the question in any way, used a language other than English throughout, or where there is proof that a candidate’s answer has been totally memorised."
+              "band_breakdown": {
+                "Range of Sentence Structures": {
+                  "9": "Uses a wide range of structures with full flexibility.",
+                  "8": "Uses a variety of complex structures.",
+                  "7": "Uses a variety of sentence structures; some errors may be present.",
+                  "6": "Mix of simple and complex forms.",
+                  "5": "Limited range of structures.",
+                  "4": "Very few structures used correctly.",
+                  "3": "Minimal grammatical structures.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Accuracy of Grammar": {
+                  "9": "Full accuracy of grammatical structures.",
+                  "8": "High degree of accuracy with minor errors.",
+                  "7": "Errors do not impede communication.",
+                  "6": "Some grammatical errors cause confusion.",
+                  "5": "Frequent grammatical errors.",
+                  "4": "Many errors; often incorrect structures.",
+                  "3": "Errors severely limit communication.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Punctuation": {
+                  "9": "Punctuation is used accurately and effectively.",
+                  "8": "Uses punctuation effectively; minor errors.",
+                  "7": "Generally uses punctuation correctly.",
+                  "6": "Some punctuation errors may cause confusion.",
+                  "5": "Frequent punctuation errors.",
+                  "4": "Punctuation errors disrupt clarity.",
+                  "3": "Very limited use of punctuation.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                },
+                "Errors": {
+                  "9": "No errors that impede understanding.",
+                  "8": "Rare errors that do not affect communication.",
+                  "7": "Some errors; generally clear.",
+                  "6": "Errors present that may confuse.",
+                  "5": "Frequent errors that affect clarity.",
+                  "4": "Errors are numerous; hard to understand.",
+                  "3": "Errors severely limit communication.",
+                  "2": "Content is not related to task",
+                  "1": "Response of 20 words or fewer",
+                  "0": "Used language is not English"
+                }
               }
             }
           ]
@@ -133,58 +425,115 @@
       }
     },
     "speaking": {
-        "parts": {
-          "1": {
+      "parts": {
+        "1": {
           "descriptors": [
-            {
-              "name": "Fluency and Coherence",
-              "scores": {
-                "9": "Fluent with only very occasional repetition or self-correction. Any hesitation that occurs is used only to prepare the content of the next utterance and not to find words or grammar. Speech is situationally appropriate and cohesive features are fully acceptable. Topic development is fully coherent and appropriately extended.",
-                "8": "Fluent with only very occasional repetition or self-correction. Hesitation may occasionally be used to find words or grammar, but most will be content related. Topic development is coherent, appropriate and relevant.",
-                "7": "Able to keep going and readily produce long turns without noticeable effort. Some hesitation, repetition and/or selfcorrection may occur, often mid-sentence and indicate problems with accessing appropriate language. However, these will not affect coherence. Flexible use of spoken discourse markers, connectives and cohesive features.",
-                "6": "Able to keep going and demonstrates a willingness to produce long turns. Coherence may be lost at times as a result of hesitation, repetition and/or self-correction. Uses a range of spoken discourse markers, connectives and cohesive features though not always appropriately.",
-                "5": "Usually able to keep going, but relies on repetition and self-correction to do so and/or on slow speech. Hesitations are often associated with mid-sentence searches for fairly basic lexis and grammar. Overuse of certain discourse markers, connectives and other cohesive features. More complex speech usually causes disfluency but simpler language may be produced fluently.",
-                "4": "Unable to keep going without noticeable pauses. Speech may be slow with frequent repetition. Often self-corrects. Can link simple sentences but often with repetitious use of connectives. Some breakdowns in coherence.",
-                "3": "Frequent, sometimes long, pauses occur while candidate searches for words. Limited ability to link simple sentences and go beyond simple responses to questions. Frequently unable to convey basic message.",
-                "2": "Lengthy pauses before nearly every word. Isolated words may be recognisable but speech is of virtually no communicative significance.",
-                "1": "Essentially none. Speech is totally incoherent.",
-                "0": "Does not attend"
-              }
-            },
-            {
-              "name": "Lexical Resource",
-              "scores": {
-                "9": "Total flexibility and precise use in all contexts. Sustained use of accurate and idiomatic language.",
-                "8": "Wide resource, readily and flexibly used to discuss all topics and convey precise meaning. Skilful use of less common and idiomatic items despite occasional inaccuracies in word choice and collocation. Effective use of paraphrase as required.",
-                "7": "Resource flexibly used to discuss a variety of topics. Some ability to use less common and idiomatic items and an awareness of style and collocation is evident though inappropriacies occur. Effective use of paraphrase as required.",
-                "6": "Resource sufficient to discuss topics at length. Vocabulary use may be inappropriate but meaning is clear. Generally able to paraphrase successfully.",
-                "5": "Resource sufficient to discuss familiar and unfamiliar topics but there is limited flexibility. Attempts paraphrase but not always with success.",
-                "4": "Resource sufficient for familiar topics but only basic meaning can be conveyed on unfamiliar topics. Frequent inappropriacies and errors in word choice. Rarely attempts paraphrase.",
-                "3": "Resource limited to simple vocabulary used primarily to convey personal information. Vocabulary inadequate for unfamiliar topics.",
-                "2": "Very limited resource. Utterances consist of isolated words or memorised utterances. Little communication possible without the support of mime or gesture.",
-                "1": "No resource bar a few isolated words. No communication possible.",
-                "0": "Does not attend"
-              }
-            },
-            {
-              "name": "Grammatical Range & Accuracy",
-              "scores": {
-                "9": "Structures are precise and accurate at all times, apart from ‘mistakes’ characteristic of native speaker speech.",
-                "8": "Wide range of structures, flexibly used. The majority of sentences are error free. Occasional inappropriacies and non-systematic errors occur. A few basic errors may persist.",
-                "7": "A range of structures flexibly used. Error-free sentences are frequent. Both simple and complex sentences are used effectively despite some errors. A few basic errors persist.",
-                "6": "Produces a mix of short and complex sentence forms and a variety of structures with limited flexibility. Though errors frequently occur in complex structures, these rarely impede communication.",
-                "5": "Basic sentence forms are fairly well controlled for accuracy. Complex structures are attempted but these are limited in range, nearly always contain errors and may lead to the need for reformulation.",
-                "4": "Can produce basic sentence forms and some short utterances are error-free. Subordinate clauses are rare and, overall, turns are short, structures are repetitive and errors are frequent.",
-                "3": "Basic sentence forms are attempted but grammatical errors are numerous except in apparently memorised utterances.",
-                "2": "No evidence of basic sentence forms.",
-                "1": "No rateable language unless memorised.",
-                "0": "Does not attend"
-              }
-            }
-      ]
+    {
+        "name": "Fluency & Coherence",
+        "band_breakdown": {
+            "Fluency": {
+                "9": "Speaks fluently with only rare repetitions or self-corrections.",
+                "8": "Speaks fluently with occasional hesitation; natural flow of speech.",
+                "7": "Usually fluent, but may hesitate occasionally to find words or phrases.",
+                "6": "Sometimes hesitant, may struggle with long stretches of speech.",
+                "5": "Frequent hesitation and repetition, may be difficult to follow.",
+                "4": "Very limited fluency; often breaks in speech.",
+                "3": "Speaks very little; cannot communicate effectively.",
+                "2": "Isolated words, no communicative significance",
+                "1": "Totally incoherent speech",
+                "0": "No answer  (less than 2 words)"                },
+            "Coherence": {
+                "9": "Ideas are logically organized and clearly linked.",
+                "8": "Clear organization with good use of linking words.",
+                "7": "Generally coherent; may occasionally lose focus.",
+                "6": "Some ideas may be unclear; occasionally lacks logical flow.",
+                "5": "Limited coherence; ideas may be difficult to follow.",
+                "4": "Very unclear; lacks logical structure.",
+                "3": "Little to no coherence in responses.",
+                "2": "Isolated words, no communicative significance",
+                "1": "Totally incoherent speech",
+                "0": "No answer  (less than 2 words)"            }
         }
+    },
+    {
+        "name": "Lexical Resource",
+        "band_breakdown": {
+            "Range of Vocabulary": {
+                "9": "Uses a wide range of vocabulary naturally and flexibly.",
+                "8": "Uses a wide range of vocabulary with some less common words.",
+                "7": "Sufficient range of vocabulary to discuss various topics.",
+                "6": "Adequate vocabulary, though errors may occur.",
+                "5": "Limited vocabulary; frequent errors in word choice.",
+                "4": "Very limited vocabulary; relies on simple words.",
+                "3": "Extremely limited vocabulary; unable to express ideas.",
+                "2": "Isolated words, no communicative significance",
+                "1": "Totally incoherent speech",
+                "0": "No answer  (less than 2 words)"            },
+            "Appropriateness of Vocabulary": {
+                "9": "Uses vocabulary effectively and appropriately.",
+                "8": "Vocabulary is generally appropriate, with occasional errors.",
+                "7": "Mostly appropriate vocabulary; some inaccuracies.",
+                "6": "Some vocabulary choices may be inappropriate.",
+                "5": "Frequent errors in word choice that cause confusion.",
+                "4": "Vocabulary often fails to convey meaning.",
+                "3": "Very few appropriate words used.",
+                "2": "Isolated words, no communicative significance",
+                "1": "Totally incoherent speech",
+                "0": "No answer  (less than 2 words)"            },
+            "Idiomatic Language": {
+                "9": "Uses idiomatic expressions naturally.",
+                "8": "Frequently uses idiomatic language appropriately.",
+                "7": "Occasionally uses idiomatic language effectively.",
+                "6": "Limited use of idiomatic expressions.",
+                "5": "Rarely uses idiomatic expressions correctly.",
+                "4": "No effective use of idiomatic language.",
+                "3": "Does not attempt to use idiomatic expressions.",
+                "2": "Isolated words, no communicative significance",
+                "1": "Totally incoherent speech",
+                "0": "No answer  (less than 2 words)"            }
+        }
+    },
+    {
+        "name": "Grammatical Range & Accuracy",
+        "band_breakdown": {
+            "Range of Sentence Structures": {
+                "9": "Uses a wide range of complex structures flexibly.",
+                "8": "Uses a variety of complex structures accurately.",
+                "7": "Uses a mix of simple and complex sentences effectively.",
+                "6": "Basic sentence structures; may struggle with complex forms.",
+                "5": "Limited range of sentence structures; frequent errors.",
+                "4": "Very few structures used correctly; limited communication.",
+                "3": "Minimal grammatical structures.",
+                "2": "Isolated words, no communicative significance",
+                "1": "Totally incoherent speech",
+                "0": "No answer  (less than 2 words)"            },
+            "Accuracy of Grammar": {
+                "9": "Full accuracy with no noticeable errors.",
+                "8": "High degree of grammatical accuracy; few errors.",
+                "7": "Some errors present, but they do not impede communication.",
+                "6": "Regular errors that may cause confusion.",
+                "5": "Frequent grammatical errors that affect clarity.",
+                "4": "Many errors; often incorrect structures.",
+                "3": "Errors severely limit communication.",
+                "2": "Isolated words, no communicative significance",
+                "1": "Totally incoherent speech",
+                "0": "No answer  (less than 2 words)"            },
+            "Punctuation and Intonation": {
+                "9": "Excellent use of intonation and punctuation to enhance meaning.",
+                "8": "Generally effective use of intonation and punctuation.",
+                "7": "Adequate use of intonation, with occasional lapses.",
+                "6": "Some intonation errors; may cause confusion.",
+                "5": "Frequent lapses in intonation and punctuation.",
+                "4": "Limited or poor intonation.",
+                "3": "Very little to no use of intonation.",
+                "2": "Isolated words, no communicative significance",
+                "1": "Totally incoherent speech",
+                "0": "No answer  (less than 2 words)"            }
+        }
+    }
+]
         }
       }
+    }
   }
 }
-

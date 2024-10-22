@@ -1,8 +1,10 @@
 import json
 import os
+from json import JSONDecodeError
 from typing import Union, Dict
 
 import uvicorn
+from celery.result import AsyncResult
 
 from fastapi import FastAPI, HTTPException, Request, Response, File, UploadFile, Form
 from pydantic import ValidationError
@@ -16,7 +18,11 @@ app = FastAPI()
 
 def load_and_validate_json(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
-        json_data = json.load(f)
+        try:
+            json_data = json.load(f)
+        except JSONDecodeError:
+            logger.error("Invalid JSON")
+            raise
     try:
         band_descriptors = schemas.BandDescriptors(**json_data)
         return band_descriptors.dict()
@@ -40,9 +46,13 @@ async def startup_event():
     with open(os.path.join(os.path.dirname(__file__), file_name), 'r', encoding='utf-8') as f:
         app.band_score_prompt_template = f.read()
 
-    file_name = "prompts/writing_correction_prompt_template.txt"
+    file_name = "prompts/writing_final_score_prompt_template.txt"
     with open(os.path.join(os.path.dirname(__file__), file_name), 'r', encoding='utf-8') as f:
-        app.writing_correction_prompt_template = f.read()
+        app.writing_final_score_prompt_template = f.read()
+
+    file_name = "prompts/speaking_final_score_prompt_template.txt"
+    with open(os.path.join(os.path.dirname(__file__), file_name), 'r', encoding='utf-8') as f:
+        app.speaking_final_score_prompt_template = f.read()
 
 
 @app.middleware("http")
@@ -73,7 +83,7 @@ def register_writing_evaluation_task(eval_item: schemas.AnswerIn):
                                   answer=eval_item.task.answer,
                                   band_descriptors=app.band_descriptors,
                                   band_score_prompt_template=app.band_score_prompt_template,
-                                  writing_correction_prompt_template=app.writing_correction_prompt_template)
+                                  final_score_prompt_template=app.writing_final_score_prompt_template)
 
     celery_task = answer_evaluator.register_evaluation_task()
     return {"task_id": celery_task}
@@ -89,33 +99,28 @@ def register_speaking_evaluation_task(question: str = Form(...), file: UploadFil
         question=question,
         answer=file,
         band_descriptors=app.band_descriptors,
-        band_score_prompt_template=app.band_score_prompt_template)
+        band_score_prompt_template=app.band_score_prompt_template,
+        final_score_prompt_template=app.speaking_final_score_prompt_template)
 
     celery_task = answer_evaluator.register_evaluation_task()
     return {"task_id": celery_task}
 
 
-@app.get("/tasks/{task_id}", response_model=Union[schemas.SpeakingFeedbackOut,
-                                                  schemas.WritingFeedbackOut, Dict[str, str]])
+@app.get("/tasks/{task_id}",
+         response_model=Union[schemas.SpeakingFeedbackOut,
+         schemas.WritingFeedbackOut, Dict[str, str]])
 def get_task(task_id: str, response: Response):
-    group_result = celery_app.GroupResult.restore(task_id)
+    chord_result = AsyncResult(task_id, app=celery_app)
 
-    if group_result:
-        if not group_result.ready():
-            response.status_code = 202
-            return {"detail": "Evaluation in progress"}
+    if chord_result.ready():
+        if chord_result.successful():
+            final_result = chord_result.result
 
-        if group_result.failed():
-            raise HTTPException(status_code=400, detail="A task in the group failed")
-
-        group_result = group_result.get()
-        merged_results = {}
-        [merged_results.update(task_result) for task_result in group_result]
-
-        return merged_results
-
-    raise HTTPException(status_code=400, detail=f"Task with id {task_id} not found")
-
+            merged_results = {}
+            [merged_results.update(result) for result in final_result]
+            return merged_results
+    response.status_code = 202
+    return {"detail": "Pending"}
 
 def start():
     """Launched with `poetry run start` at root level"""

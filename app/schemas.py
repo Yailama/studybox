@@ -31,20 +31,21 @@ class BandScores(BaseModel):
         "Coherence & Cohesion",
         "Lexical Resource",
         "Grammatical Range & Accuracy",
-        "Fluency and Coherence"
+        "Fluency & Coherence",
+        "Overall Impression"
     ]
-    scores: Dict[str, str]
+    band_breakdown: Dict[str, Dict[str, str]]
 
-    @model_validator(mode='before')
-    @classmethod
-    def check_keys(cls, data: Any) -> Any:
-        if isinstance(data, dict):
-            keys_to_check = {str(i) for i in range(10)}
-            keys = set(data["scores"].keys())
-
-            assert keys_to_check == keys, f'Expected {keys_to_check}, got {keys}'
-
-        return data
+    # @model_validator(mode='before')
+    # @classmethod
+    # def check_keys(cls, data: Any) -> Any:
+    #     if isinstance(data, dict):
+    #         keys_to_check = {str(i) for i in range(10)}
+    #         keys = set(data["scores"].keys())
+    #
+    #         assert keys_to_check == keys, f'Expected {keys_to_check}, got {keys}'
+    #
+    #     return data
 
 
 class WritingBandDescriptors(BaseModel):
@@ -73,7 +74,7 @@ class SpeakingBandDescriptors(BaseModel):
     @classmethod
     def check_keys(cls, data: Any) -> Any:
         if isinstance(data, dict):
-            keys_to_check = {"Fluency and Coherence", "Lexical Resource",
+            keys_to_check = {"Fluency & Coherence", "Lexical Resource",
                              "Grammatical Range & Accuracy"}
             keys = {x['name'] for x in data['descriptors']}
             assert keys_to_check == keys, f'Expected exactly Speaking Band Descriptors: ' \
@@ -114,49 +115,43 @@ class BandDescriptors(BaseModel):
         return data
 
 
-class BandDescriptorFeedback(BaseModel):
+class Feedback(BaseModel):
+    feedback: str
+    recommendation: str
+
+class WritingGeneralFeedback(Feedback):
+    rewriting: str
+
+class WritingGeneralFeedbackOut(WritingGeneralFeedback):
+    score: float
+
+class SpeakingGeneralFeedbackOut(Feedback):
+    score: float
+
+class BandDescriptorBreakdown(Feedback):
+    name: str
     score: int
     feedback: str
+    recommendation: str | None
 
-
-class TextCorrectionFeedback(BaseModel):
-    before: str
-    after: str
-
-
-class WritingTextCorrection(BaseModel):
-    type: Literal["mistake", "strength"]
-    subtype: str
-    source: str
-    content: str
-
-
-class WritingTextCorrectionMistake(WritingTextCorrection):
-    type: Literal["mistake"]
-    difference: List[TextCorrectionFeedback]
-
-
-class WritingTextCorrectionStrength(WritingTextCorrection):
-    type: Literal["strength"]
-
-
-class WritingTextCorrectionFeedback(BaseModel):
-    feedback: List[Union[WritingTextCorrectionMistake, WritingTextCorrectionStrength]]
-
+class BandDescriptorFeedback(Feedback):
+    feedback: str
+    recommendation: str
+    breakdown: List[BandDescriptorBreakdown]
 
 class WritingFeedbackOut(BaseModel):
     task_achievement: BandDescriptorFeedback = Field(alias="Task Achievement")
     coherence_and_cohesion: BandDescriptorFeedback = Field(alias="Coherence & Cohesion")
     lexical_resource: BandDescriptorFeedback = Field(alias="Lexical Resource")
     grammar: BandDescriptorFeedback = Field(alias="Grammatical Range & Accuracy")
-    text_correction: List[Union[WritingTextCorrectionMistake, WritingTextCorrectionStrength]] = \
-        Field(alias="Text Correction")
+    general: WritingGeneralFeedbackOut = Field(alias="General Feedback")
 
 
 class SpeakingFeedbackOut(BaseModel):
-    fluency_and_cohesion: BandDescriptorFeedback = Field(alias="Fluency and Coherence")
+    fluency_and_cohesion: BandDescriptorFeedback = Field(alias="Fluency & Coherence")
     lexical_resource: BandDescriptorFeedback = Field(alias="Lexical Resource")
     grammar: BandDescriptorFeedback = Field(alias="Grammatical Range & Accuracy")
+    general: SpeakingGeneralFeedbackOut = Field(alias="General Feedback")
 
     class Config:
         allow_population_by_field_name = True

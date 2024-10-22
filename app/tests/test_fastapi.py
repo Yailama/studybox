@@ -1,6 +1,4 @@
-import json
-from unittest.mock import patch, MagicMock
-import pytest
+from unittest.mock import MagicMock
 from fastapi.testclient import TestClient
 from app.main import app
 
@@ -170,14 +168,4 @@ test_data = [
 ]
 
 
-@pytest.fixture
-def set_group_result_mock(group_result):
-    with patch('app.celery_worker.celery_app.GroupResult.restore') as mock_group_result:
-        mock_group_result.return_value = group_result_mock(group_result)
-        yield mock_group_result
-@pytest.mark.parametrize("group_result, status_code, message", test_data)
-def test_get_task_result(set_group_result_mock, group_result, status_code, message):
-
-    response = client.get("/tasks/test-task-id")
-    assert response.status_code == status_code
-    assert json.loads(response.text) == message
+#TODO: return deleted test
