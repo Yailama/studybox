@@ -119,6 +119,7 @@ def get_task(task_id: str, response: Response):
             merged_results = {}
             [merged_results.update(result) for result in final_result]
             return merged_results
+        raise HTTPException(status_code=400, detail="Task evaluation failed, try again")
     response.status_code = 202
     return {"detail": "Pending"}
 
